@@ -1,0 +1,32 @@
+<garage type="small">
+    <car model="Mercedes Sprinter">
+        <engine>Diesel 2.2</engine>
+        <color>blue</color>
+        <number>CE1188AA</number>
+        <max_speed>220</max_speed>
+        <year>2008</year>
+        <passager>true</passager>
+        <back_windows>false</back_windows>
+        <passager_seats_count>8</passager_seats_count>
+    </car>
+    <car model="VAZ 2115">
+        <engine>ВАЗ-11183</engine>
+        <color>grey</color>
+        <number>CE2654AA</number>
+        <max_speed>180</max_speed>
+        <year>2006</year>
+        <wheel_radius>15</wheel_radius>
+        <salon>Standart</salon>
+        <back_view_camera>false</back_view_camera>
+    </car>
+    <car model="BMW 320">
+        <engine>V6+Turbo</engine>
+        <color>blue</color>
+        <number>CE3350AA</number>
+        <max_speed>260</max_speed>
+        <year>2016</year>
+        <wheel_radius>20</wheel_radius>
+        <salon>Leather</salon>
+        <back_view_camera>true</back_view_camera>
+    </car>
+</garage>

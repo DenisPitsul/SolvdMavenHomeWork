@@ -1,0 +1,27 @@
+<addresses>
+    <address>
+        <city>Chernivtsi</city>
+        <street>Nebesnoy sotni</street>
+        <house_number>4B</house_number>
+    </address>
+    <address>
+        <city>Chernivtsi</city>
+        <district>Hliboka</district>
+        <street>Holovna</street>
+        <house_number>133</house_number>
+    </address>
+    <address>
+        <city>Chernivtsi</city>
+        <district>Hliboka</district>
+        <village>Kamianka</village>
+        <street>Molodizhna</street>
+        <house_number>16</house_number>
+    </address>
+    <address>
+        <city>Chernivtsi</city>
+        <district>Hliboka</district>
+        <village>Kamianka</village>
+        <street>Siniuka</street>
+        <house_number>7</house_number>
+    </address>
+</addresses>

@@ -1,0 +1,50 @@
+<sellers>
+    <seller>
+        <first_name>Masha</first_name>
+        <last_name>Balaniuk</last_name>
+        <sallary>6500</sallary>
+        <work_place>Veres</work_place>
+    </seller>
+    <seller>
+        <first_name>Julia</first_name>
+        <last_name>Vorobets</last_name>
+        <sallary>6000</sallary>
+        <work_place>Veres</work_place>
+    </seller>
+    <seller>
+        <first_name>Alina</first_name>
+        <last_name>Balan</last_name>
+        <sallary>6000</sallary>
+        <work_place>U Romchika</work_place>
+    </seller>
+    <seller>
+        <first_name>Kristina</first_name>
+        <last_name>Babiuk</last_name>
+        <sallary>5800</sallary>
+        <work_place>U Romchika</work_place>
+    </seller>
+    <seller>
+        <first_name>Dmitro</first_name>
+        <last_name>Biliychuck</last_name>
+        <sallary>5500</sallary>
+        <work_place>U Romchika</work_place>
+    </seller>
+    <seller>
+        <first_name>Olesia</first_name>
+        <last_name>Onishckuk</last_name>
+        <sallary>6200</sallary>
+        <work_place>Fourmarket</work_place>
+    </seller>
+    <seller>
+        <first_name>Masha</first_name>
+        <last_name>Peron</last_name>
+        <sallary>6100</sallary>
+        <work_place>Fourmarket</work_place>
+    </seller>
+    <seller>
+        <first_name>Oleksangra</first_name>
+        <last_name>Mishchuck</last_name>
+        <sallary>6000</sallary>
+        <work_place>Fourmarket</work_place>
+    </seller>
+</sellers>

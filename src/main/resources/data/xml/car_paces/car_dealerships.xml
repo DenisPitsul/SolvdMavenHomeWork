@@ -1,0 +1,77 @@
+<car_dealerships>
+    <car_dealership name="Tesla">
+        <car model="Tesla Semi">
+            <engine>Electric</engine>
+            <color>yellow</color>
+            <number>CE4099AA</number>
+            <max_speed>200</max_speed>
+            <year>2017</year>
+            <lifting_capacity>21</lifting_capacity>
+            <battery_pawer_reserve>810</battery_pawer_reserve>
+        </car>
+        <car model="Tesla Model 3">
+            <engine>Electric</engine>
+            <color>while</color>
+            <number>CE0042AA</number>
+            <max_speed>240</max_speed>
+            <year>2016</year>
+            <wheel_radius>21</wheel_radius>
+            <salon>Leather</salon>
+            <back_view_camera>true</back_view_camera>
+        </car>
+        <car model="Tesla Model S">
+            <engine>Electric</engine>
+            <color>black</color>
+            <number>CE1733AA</number>
+            <max_speed>300</max_speed>
+            <year>2018</year>
+            <wheel_radius>21</wheel_radius>
+            <salon>Leather</salon>
+            <back_view_camera>true</back_view_camera>
+        </car>
+    </car_dealership>
+    <car_dealership name="Audi">
+        <car model="Audi A6">
+            <engine>V6+Turbo</engine>
+            <color>black</color>
+            <number>CE4401AA</number>
+            <max_speed>260</max_speed>
+            <year>2015</year>
+            <wheel_radius>21</wheel_radius>
+            <salon>Alcantara</salon>
+            <back_view_camera>true</back_view_camera>
+        </car>
+        <car model="Audi A4">
+            <engine>V6</engine>
+            <color>white</color>
+            <number>CE4432AA</number>
+            <max_speed>250</max_speed>
+            <year>2013</year>
+            <wheel_radius>20</wheel_radius>
+            <salon>Leather</salon>
+            <back_view_camera>true</back_view_camera>
+        </car>
+    </car_dealership>
+    <car_dealership name="mercedes">
+        <car model="Mercedes Vito">
+            <engine>Diesel 2.2</engine>
+            <color>grey</color>
+            <number>CE6411AA</number>
+            <max_speed>220</max_speed>
+            <year>2010</year>
+            <passager>true</passager>
+            <back_windows>true</back_windows>
+            <passager_seats_count>9</passager_seats_count>
+        </car>
+        <car model="Mercedes E300">
+            <engine>V6+Turbo</engine>
+            <color>Black</color>
+            <number>CE4432AA</number>
+            <max_speed>260</max_speed>
+            <year>2018</year>
+            <wheel_radius>20</wheel_radius>
+            <salon>Alcantara</salon>
+            <back_view_camera>true</back_view_camera>
+        </car>
+    </car_dealership>
+</car_dealerships>

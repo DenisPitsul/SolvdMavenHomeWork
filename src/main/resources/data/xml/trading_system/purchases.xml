@@ -1,0 +1,120 @@
+<purchases>
+    <purchase>
+        <trading_point>Fourmarket</trading_point>
+        <seller>Olesia Onishckuk</seller>
+        <customer>Denis Pitsul</customer>
+        <items>
+            <item>
+                <name>Cheese</name>
+                <apiece>false</apiece>
+                <mass_gr>400</mass_gr>
+                <price_for_kg>75</price_for_kg>
+            </item>
+            <item>
+                <name>White bread</name>
+                <apiece>true</apiece>
+                <count>2</count>
+                <price_for_item>12</price_for_item>
+            </item>
+        </items>
+        <total_price>54</total_price>
+    </purchase>
+    <purchase>
+        <trading_point>Fourmarket</trading_point>
+        <seller>Oleksangra Mishchuck</seller>
+        <customer>Volodimir Peron</customer>
+        <items>
+            <item>
+                <name>Butter</name>
+                <apiece>false</apiece>
+                <mass_gr>200</mass_gr>
+                <price_for_kg>85</price_for_kg>
+            </item>
+            <item>
+                <name>Black bread</name>
+                <apiece>true</apiece>
+                <count>1</count>
+                <price_for_item>14</price_for_item>
+            </item>
+            <item>
+                <name>White bread</name>
+                <apiece>true</apiece>
+                <count>2</count>
+                <price_for_item>12</price_for_item>
+            </item>
+            <item>
+                <name>Shampoo</name>
+                <apiece>true</apiece>
+                <count>1</count>
+                <price_for_item>60</price_for_item>
+            </item>
+        </items>
+        <total_price>115</total_price>
+    </purchase>
+    <purchase>
+        <trading_point>U Romckika</trading_point>
+        <seller>Dmitro Biliychuck</seller>
+        <customer>Bogdan Karliychuck</customer>
+        <items>
+            <item>
+                <name>Latte</name>
+                <apiece>true</apiece>
+                <count>1</count>
+                <price_for_item>20</price_for_item>
+            </item>
+            <item>
+                <name>Ameracano With Milk</name>
+                <apiece>true</apiece>
+                <count>1</count>
+                <price_for_item>14</price_for_item>
+            </item>
+        </items>
+        <total_price>34</total_price>
+    </purchase>
+    <purchase>
+        <trading_point>Veres</trading_point>
+        <seller>Masha Balaniuk</seller>
+        <customer>Maxim Guriv</customer>
+        <items>
+            <item>
+                <name>Beer</name>
+                <apiece>true</apiece>
+                <count>3</count>
+                <price_for_item>18</price_for_item>
+            </item>
+            <item>
+                <name>Chips Lays</name>
+                <apiece>true</apiece>
+                <count>1</count>
+                <price_for_item>28</price_for_item>
+            </item>
+        </items>
+        <total_price>72</total_price>
+    </purchase>
+    <purchase>
+        <trading_point>Veres</trading_point>
+        <seller>Julia Vorobets</seller>
+        <customer>Andry Onishchuk</customer>
+        <items>
+            <item>
+                <name>Cookies Day-Night</name>
+                <apiece>false</apiece>
+                <mass_gr>700</mass_gr>
+                <price_for_kg>55</price_for_kg>
+            </item>
+            <item>
+                <name>Candy Truffle</name>
+                <apiece>false</apiece>
+                <mass_gr>400</mass_gr>
+                <price_for_kg>55</price_for_kg>
+            </item>
+            <item>
+                <name>Big bottle Coca-Cola</name>
+                <apiece>true</apiece>
+                <count>2</count>
+                <price_for_item>24</price_for_item>
+            </item>
+        </items>
+        <total_price>108.5</total_price>
+    </purchase>
+</purchases>

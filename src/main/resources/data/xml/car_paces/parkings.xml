@@ -1,0 +1,66 @@
+<parkings>
+    <parking number="1">
+        <car model="Audi A6">
+            <engine>V6+Turbo</engine>
+            <color>red</color>
+            <number>CE5510AA</number>
+            <max_speed>260</max_speed>
+            <year>2016</year>
+            <wheel_radius>20</wheel_radius>
+            <salon>Alcantara</salon>
+            <back_view_camera>true</back_view_camera>
+        </car>
+        <car model="Mercedes Vito">
+            <engine>Diesel 2.2</engine>
+            <color>white</color>
+            <number>CE2901AA</number>
+            <max_speed>240</max_speed>
+            <year>2012</year>
+            <passager>true</passager>
+            <back_windows>true</back_windows>
+            <passager_seats_count>7</passager_seats_count>
+        </car>
+        <car model="Toyota Land Cruiser">
+            <engine>V8 4.5</engine>
+            <color>grey</color>
+            <number>CE6511AA</number>
+            <max_speed>240</max_speed>
+            <year>2014</year>
+            <top_trunk>true</top_trunk>
+            <clearance_lenght>60</clearance_lenght>
+            <back_view_camera>true</back_view_camera>
+        </car>
+    </parking>
+    <parking number="2">
+        <car model="Toyota Land Cruiser">
+            <engine>V8 4.5</engine>
+            <color>grey</color>
+            <number>CE4190AA</number>
+            <max_speed>230</max_speed>
+            <year>2016</year>
+            <top_trunk>false</top_trunk>
+            <clearance_lenght>50</clearance_lenght>
+            <back_view_camera>true</back_view_camera>
+        </car>
+        <car model="Mercedes Vito">
+            <engine>Diesel 2.2</engine>
+            <color>green</color>
+            <number>CE3355AA</number>
+            <max_speed>220</max_speed>
+            <year>2011</year>
+            <passager>true</passager>
+            <back_windows>false</back_windows>
+            <passager_seats_count>8</passager_seats_count>
+        </car>
+        <car model="Audi A6">
+            <engine>V6+Turbo</engine>
+            <color>red</color>
+            <number>CE9001AA</number>
+            <max_speed>260</max_speed>
+            <year>2016</year>
+            <wheel_radius>20</wheel_radius>
+            <salon>Leather</salon>
+            <back_view_camera>true</back_view_camera>
+        </car>
+    </parking>
+</parkings>

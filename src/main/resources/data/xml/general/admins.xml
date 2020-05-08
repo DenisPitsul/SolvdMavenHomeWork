@@ -1,0 +1,20 @@
+<admins>
+    <andmin>
+        <first_name>Denis</first_name>
+        <last_name>Pitsul</last_name>
+        <age>21</age>
+        <email>denia.pitsul@gmail.com</email>
+    </andmin>
+    <andmin>
+        <first_name>Andry</first_name>
+        <last_name>Onishchuk</last_name>
+        <age>22</age>
+        <email>andry.onishchuk@gmail.com</email>
+    </andmin>
+    <andmin>
+        <first_name>Volodimyr</first_name>
+        <last_name>Peron</last_name>
+        <age>20</age>
+        <email>volodimyr.peron@gmail.com</email>
+    </andmin>
+</admins>

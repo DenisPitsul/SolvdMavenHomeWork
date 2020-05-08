@@ -1,0 +1,22 @@
+<customers>
+    <customer>
+        <first_name>Denis</first_name>
+        <last_name>Pitsul</last_name>
+    </customer>
+    <customer>
+        <first_name>Andry</first_name>
+        <last_name>Onishchuk</last_name>
+    </customer>
+    <customer>
+        <first_name>Volodimir</first_name>
+        <last_name>Peron</last_name>
+    </customer>
+    <customer>
+        <first_name>Bogdan</first_name>
+        <last_name>Karliychik</last_name>
+    </customer>
+    <customer>
+        <first_name>Maxim</first_name>
+        <last_name>Guriv</last_name>
+    </customer>
+</customers>

@@ -1,0 +1,39 @@
+<trading_points>
+    <trading_point>
+        <type>Shopping mall</type>
+        <name>Fourmarket</name>
+        <area>150</area>
+        <employees_count>36</employees_count>
+        <address>
+            <city>Chernivtsi</city>
+            <street>Nebesnoi sotni</street>
+            <house_number>19B</house_number>
+        </address>
+    </trading_point>
+    <trading_point>
+        <type>shop</type>
+        <name>Veres</name>
+        <area>25</area>
+        <employees_count>2</employees_count>
+        <address>
+            <city>Chernivtsi</city>
+            <district>Hliboka</district>
+            <village>Kamianka</village>
+            <street>Siniuka</street>
+            <house_number>7</house_number>
+        </address>
+    </trading_point>
+    <trading_point>
+        <type>shop</type>
+        <name>U Romchika</name>
+        <area>30</area>
+        <employees_count>3</employees_count>
+        <address>
+            <city>Chernivtsi</city>
+            <district>Hliboka</district>
+            <village>Kamianka</village>
+            <street>Siniuka</street>
+            <house_number>1</house_number>
+        </address>
+    </trading_point>
+</trading_points>

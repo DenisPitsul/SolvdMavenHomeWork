@@ -1,8 +1,10 @@
 package com.solvd.car.vehicle;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.helper.Engine;
 
 public class Truck extends Car {
+    @JsonProperty("lifting_capacity")
     private int liftingCapacity; // tons
 
     public Truck(Engine engine, int maxSpeed, int year) {

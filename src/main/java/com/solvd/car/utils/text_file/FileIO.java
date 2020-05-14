@@ -1,4 +1,4 @@
-package com.solvd.car.utils;
+package com.solvd.car.utils.text_file;
 
 import org.apache.log4j.Logger;
 
@@ -18,17 +18,9 @@ public class FileIO {
     }
 
     public static String readFromFile(String path) {
-        File file = new File(path);
-        try {
-            if (file.createNewFile())
-                LOGGER.info(path + " has created!");
-            else
-                LOGGER.info(path + " already exists.");
-        } catch (IOException e) {
-            LOGGER.error(e);
-        }
+        createFileIfItDoesNotExist(path);
         StringBuilder sb = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))){
             String line = "";
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append(System.lineSeparator());
@@ -41,10 +33,22 @@ public class FileIO {
 
     public static void clearFile(String path) {
         File file = new File(path);
-        try ( PrintWriter writer = new PrintWriter(file);) {
+        try (PrintWriter writer = new PrintWriter(file);) {
             writer.print("");
         } catch (IOException e) {
             LOGGER.error(e);
+        }
+    }
+
+    public static void createFileIfItDoesNotExist(String filePath) {
+        File file = new File(filePath);
+        try {
+            if (file.createNewFile())
+                LOGGER.info(filePath + " has created.");
+            else
+                LOGGER.info(filePath + " already exists.");
+        } catch (IOException e) {
+            LOGGER.error(String.format("Creating %s failed.", filePath), e);
         }
     }
 }

@@ -1,6 +1,9 @@
 package com.solvd.car.vehicle.final_car;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.solvd.car.utils.json.model.CarPOJO;
 import com.solvd.car.vehicle.Truck;
+import com.solvd.car.vehicle.Vehicle;
 import com.solvd.car.vehicle.helper.Engine;
 import com.solvd.car.vehicle.interfaces.Car;
 import com.solvd.car.vehicle.interfaces.CarModel;
@@ -9,6 +12,7 @@ import org.apache.log4j.Logger;
 public final class TeslaSemi extends Truck implements CarModel, Car {
     private static final Logger LOGGER = Logger.getLogger(TeslaSemi.class);
 
+    @JsonProperty("battery_power_reserve")
     private int batteryPowerReserve; // battery power in kilometers of autonomous driving
 
     public TeslaSemi(int maxSpeed, int year) {
@@ -32,6 +36,20 @@ public final class TeslaSemi extends Truck implements CarModel, Car {
 
     public void setBatteryPowerReserve(int batteryPowerReserve) {
         this.batteryPowerReserve = batteryPowerReserve;
+    }
+
+    public static TeslaSemi initTeslaSemiFromCarPOJO(CarPOJO carPOJO) {
+        TeslaSemi teslaSemi = new TeslaSemi();
+
+        teslaSemi.setEngine(Vehicle.fromStringToEngine(carPOJO.getEngine()));
+        teslaSemi.setColor(carPOJO.getColor());
+        teslaSemi.setNumber(carPOJO.getNumber());
+        teslaSemi.setMaxSpeed(carPOJO.getMaxSpeed());
+        teslaSemi.setYear(carPOJO.getYear());
+        teslaSemi.setLiftingCapacity(carPOJO.getLiftingCapacity());
+        teslaSemi.setBatteryPowerReserve(carPOJO.getBatteryPowerReserve());
+
+        return teslaSemi;
     }
 
     @Override

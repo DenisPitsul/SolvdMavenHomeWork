@@ -1,5 +1,6 @@
 package com.solvd.car.place;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
 
@@ -9,24 +10,24 @@ import java.util.List;
 public class Parking<T extends Vehicle> implements CarPlace<T> {
     private static final Logger LOGGER = Logger.getLogger(Parking.class);
 
-    private static int countOfParkedCars;
-
-    private List<T> parkingCars;
+    @JsonProperty("count")
+    private int countOfParkedCars;
+    @JsonProperty("parked_cars")
+    private List<T> parkedCars;
 
     public Parking() {
-        parkingCars = new LinkedList<>();
+        parkedCars = new LinkedList<>();
     }
 
-    public List<T> getParkingCars() {
-        return parkingCars;
+    public List<T> getParkedCars() {
+        return parkedCars;
     }
 
-    public void setParkingCars(List<T> parkingCars) {
-        this.parkingCars = parkingCars;
+    public void setParkedCars(List<T> parkedCars) {
+        this.parkedCars = parkedCars;
     }
 
-
-    public static int getCountOfParkedCars() {
+    public int getCountOfParkedCars() {
         return countOfParkedCars;
     }
 
@@ -36,7 +37,7 @@ public class Parking<T extends Vehicle> implements CarPlace<T> {
      */
     @Override
     public void add(T car) {
-        parkingCars.add(car);
+        parkedCars.add(car);
         countOfParkedCars++;
     }
 
@@ -49,8 +50,8 @@ public class Parking<T extends Vehicle> implements CarPlace<T> {
     public T leaveThePlace(T parkedCar) {
         T car = null;
         boolean isCarExist = false;
-        for (T eachCar : parkingCars) {
-            if (eachCar == parkingCars) {
+        for (T eachCar : parkedCars) {
+            if (eachCar == parkedCars) {
                 car = parkedCar;
                 isCarExist = true;
                 break;
@@ -59,7 +60,7 @@ public class Parking<T extends Vehicle> implements CarPlace<T> {
         if (!isCarExist) {
             return null;
         }
-        parkingCars.remove(car);
+        parkedCars.remove(car);
         countOfParkedCars--;
         return car;
     }
@@ -70,17 +71,17 @@ public class Parking<T extends Vehicle> implements CarPlace<T> {
      * @return deleted car or null if there is not any cars on the parking by index
      */
     public T leaveTheParking(int carPlaceIndex) {
-        if (parkingCars.get(carPlaceIndex) == null) {
+        if (parkedCars.get(carPlaceIndex) == null) {
             return null;
         }
         countOfParkedCars--;
-        return parkingCars.remove(carPlaceIndex);
+        return parkedCars.remove(carPlaceIndex);
     }
 
     @Override
     public String toString() {
         return "Parking{" +
-                "parkingCars=" + parkingCars +
+                "parkingCars=" + parkedCars +
                 '}';
     }
 
@@ -92,8 +93,8 @@ public class Parking<T extends Vehicle> implements CarPlace<T> {
         StringBuilder sb = new StringBuilder();
         sb.append("Parking {").append(System.lineSeparator());
         sb.append("\tCount of parked cars: ").append(countOfParkedCars).append(System.lineSeparator());
-        for (int i = 0; i < parkingCars.size(); i++) {
-            sb.append("\tPlace #").append(i).append(": ").append(parkingCars.get(i).getShortInfo()).append(System.lineSeparator());
+        for (int i = 0; i < parkedCars.size(); i++) {
+            sb.append("\tPlace #").append(i).append(": ").append(parkedCars.get(i).getShortInfo()).append(System.lineSeparator());
         }
         sb.append("}");
         LOGGER.debug(sb.toString());

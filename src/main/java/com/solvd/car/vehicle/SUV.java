@@ -1,9 +1,13 @@
 package com.solvd.car.vehicle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.helper.Engine;
 
 public class SUV extends Car {
+    @JsonProperty("there_top_trunk")
     private boolean isThereTopTrunk;
+    @JsonProperty("clearance_length")
     private int clearanceLength;
 
     public SUV(Engine engine, int maxSpeed, int year) {
@@ -19,6 +23,7 @@ public class SUV extends Car {
     public SUV() {
     }
 
+    @JsonIgnore
     public boolean isThereTopTrunk() {
         return isThereTopTrunk;
     }

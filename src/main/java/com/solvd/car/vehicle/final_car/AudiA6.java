@@ -1,6 +1,10 @@
 package com.solvd.car.vehicle.final_car;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.solvd.car.utils.json.model.CarPOJO;
 import com.solvd.car.vehicle.Sedan;
+import com.solvd.car.vehicle.Vehicle;
 import com.solvd.car.vehicle.helper.Engine;
 import com.solvd.car.vehicle.interfaces.Car;
 import com.solvd.car.vehicle.interfaces.CarModel;
@@ -10,6 +14,7 @@ public final class AudiA6 extends Sedan implements CarModel, Car {
     private static final Logger LOGGER = Logger.getLogger(AudiA6.class);
 
     private String salon;
+    @JsonProperty("there_back_view_camera")
     private boolean isThereBackViewCamera;
 
     public AudiA6(int maxSpeed, int year) {
@@ -38,12 +43,28 @@ public final class AudiA6 extends Sedan implements CarModel, Car {
         this.salon = salon;
     }
 
+    @JsonIgnore
     public boolean isThereBackViewCamera() {
         return isThereBackViewCamera;
     }
 
     public void setThereBackViewCamera(boolean isThereBackViewCamera) {
         this.isThereBackViewCamera = isThereBackViewCamera;
+    }
+
+    public static AudiA6 initAudiA6FromCarPOJO(CarPOJO carPOJO) {
+        AudiA6 audiA6 = new AudiA6();
+
+        audiA6.setEngine(Vehicle.fromStringToEngine(carPOJO.getEngine()));
+        audiA6.setColor(carPOJO.getColor());
+        audiA6.setNumber(carPOJO.getNumber());
+        audiA6.setMaxSpeed(carPOJO.getMaxSpeed());
+        audiA6.setYear(carPOJO.getYear());
+        audiA6.setWheelRadius(carPOJO.getWheelRadius());
+        audiA6.setSalon(carPOJO.getSalon());
+        audiA6.setThereBackViewCamera(carPOJO.isThereBackViewCamera());
+
+        return audiA6;
     }
 
     @Override

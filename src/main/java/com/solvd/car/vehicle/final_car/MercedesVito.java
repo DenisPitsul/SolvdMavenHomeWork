@@ -1,6 +1,9 @@
 package com.solvd.car.vehicle.final_car;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.solvd.car.utils.json.model.CarPOJO;
 import com.solvd.car.vehicle.MiniBus;
+import com.solvd.car.vehicle.Vehicle;
 import com.solvd.car.vehicle.helper.Engine;
 import com.solvd.car.vehicle.interfaces.Car;
 import com.solvd.car.vehicle.interfaces.CarModel;
@@ -9,6 +12,7 @@ import org.apache.log4j.Logger;
 public final class MercedesVito extends MiniBus implements CarModel, Car {
     private static final Logger LOGGER = Logger.getLogger(MercedesVito.class);
 
+    @JsonProperty("passenger_seats_count")
     private int passengerSeatsCount;
 
     public MercedesVito(int maxSpeed, int year) {
@@ -35,6 +39,21 @@ public final class MercedesVito extends MiniBus implements CarModel, Car {
 
     public void setPassengerSeatsCount(int passengerSeatsCount) {
         this.passengerSeatsCount = passengerSeatsCount;
+    }
+
+    public static MercedesVito initMercedesVitoFromCarPOJO(CarPOJO carPOJO) {
+        MercedesVito mercedesVito = new MercedesVito();
+
+        mercedesVito.setEngine(Vehicle.fromStringToEngine(carPOJO.getEngine()));
+        mercedesVito.setColor(carPOJO.getColor());
+        mercedesVito.setNumber(carPOJO.getNumber());
+        mercedesVito.setMaxSpeed(carPOJO.getMaxSpeed());
+        mercedesVito.setYear(carPOJO.getYear());
+        mercedesVito.setPassenger(carPOJO.isPassenger());
+        mercedesVito.setThereBackWindows(carPOJO.isThereBackWindows());
+        mercedesVito.setPassengerSeatsCount(carPOJO.getPassengerSeatsCount());
+
+        return mercedesVito;
     }
 
     @Override

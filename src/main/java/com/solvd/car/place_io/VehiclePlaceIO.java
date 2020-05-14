@@ -1,6 +1,9 @@
 package com.solvd.car.place_io;
 
-import com.solvd.car.utils.FileIO;
+import com.solvd.car.place.CarPlace;
+import com.solvd.car.utils.text_file.FileIO;
+import com.solvd.car.utils.json.JsonConverter;
+import com.solvd.car.place_io.helper.JsonOperation;
 import com.solvd.car.vehicle.Vehicle;
 import com.solvd.car.vehicle.final_car.AudiA6;
 import com.solvd.car.vehicle.final_car.MercedesVito;
@@ -12,7 +15,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.util.Arrays;
 
-public abstract class VehiclePlaceIO<G> {
+public abstract class VehiclePlaceIO<G> implements JsonOperation<CarPlace<Vehicle>> {
     private static final Logger LOGGER = Logger.getLogger(VehiclePlaceIO.class);
 
     private File file;
@@ -30,9 +33,12 @@ public abstract class VehiclePlaceIO<G> {
     }
 
     public abstract void writeToFile(Vehicle vehicle);
-    public abstract void writeAllToFile(G group);
-    public abstract G readAllFromFile();
-    public abstract void clearFile();
+
+    @Override
+    public void writeToJsonFile(CarPlace<Vehicle> carPlace, String filePath) {
+        FileIO.createFileIfItDoesNotExist(filePath);
+        JsonConverter.convertJavaToJsonFile(carPlace, filePath);
+    }
 
     protected String fromVehicleToString(Vehicle vehicle) {
         StringBuilder sb = new StringBuilder();
@@ -103,8 +109,6 @@ public abstract class VehiclePlaceIO<G> {
         sb.append(toyotaLandCruiser.isThereBackViewCamera()).append(",");
 
         return sb.toString();
-
-
     }
 
     protected String fromTeslaSemiToString(TeslaSemi teslaSemi) {
@@ -148,20 +152,9 @@ public abstract class VehiclePlaceIO<G> {
         return vehicle;
     }
 
-    private Engine fromStringToEngine(String str) {
-        Engine engine = null;
-        for (Engine eachEngine: Engine.values()) {
-            if (str.equals(eachEngine.getName())) {
-                engine = eachEngine;
-                break;
-            }
-        }
-        return engine;
-    }
-
     protected AudiA6 fromStringToAudiA6(String[] audiA6ArrayValues) {
         AudiA6 audiA6 = new AudiA6();
-        audiA6.setEngine(fromStringToEngine(audiA6ArrayValues[0]));
+        audiA6.setEngine(Vehicle.fromStringToEngine(audiA6ArrayValues[0]));
         audiA6.setColor(audiA6ArrayValues[1]);
         audiA6.setNumber(audiA6ArrayValues[2]);
         audiA6.setSalon(audiA6ArrayValues[6]);
@@ -180,7 +173,7 @@ public abstract class VehiclePlaceIO<G> {
 
     protected MercedesVito fromStringToMercedesVito(String[] mercedesVitoArrayValues) {
         MercedesVito mercedesVito = new MercedesVito();
-        mercedesVito.setEngine(fromStringToEngine(mercedesVitoArrayValues[0]));
+        mercedesVito.setEngine(Vehicle.fromStringToEngine(mercedesVitoArrayValues[0]));
         mercedesVito.setColor(mercedesVitoArrayValues[1]);
         mercedesVito.setNumber(mercedesVitoArrayValues[2]);
         mercedesVito.setPassenger(Boolean.parseBoolean(mercedesVitoArrayValues[5]));
@@ -199,7 +192,7 @@ public abstract class VehiclePlaceIO<G> {
 
     protected ToyotaLandCruiser fromStringToToyotaLandCruiser(String[] toyotaLandCruiserArrayValues) {
         ToyotaLandCruiser toyotaLandCruiser = new ToyotaLandCruiser();
-        toyotaLandCruiser.setEngine(fromStringToEngine(toyotaLandCruiserArrayValues[0]));
+        toyotaLandCruiser.setEngine(Vehicle.fromStringToEngine(toyotaLandCruiserArrayValues[0]));
         toyotaLandCruiser.setColor(toyotaLandCruiserArrayValues[1]);
         toyotaLandCruiser.setNumber(toyotaLandCruiserArrayValues[2]);
         toyotaLandCruiser.setThereTopTrunk(Boolean.parseBoolean(toyotaLandCruiserArrayValues[5]));
@@ -218,7 +211,7 @@ public abstract class VehiclePlaceIO<G> {
 
     protected TeslaSemi fromStringToTeslaSemi(String[] teslaSemiArrayValues) {
         TeslaSemi teslaSemi = new TeslaSemi();
-        teslaSemi.setEngine(fromStringToEngine(teslaSemiArrayValues[0]));
+        teslaSemi.setEngine(Vehicle.fromStringToEngine(teslaSemiArrayValues[0]));
         teslaSemi.setColor(teslaSemiArrayValues[1]);
         teslaSemi.setNumber(teslaSemiArrayValues[2]);
         try {

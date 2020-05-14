@@ -1,5 +1,6 @@
 package com.solvd.car.place;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
 
@@ -9,8 +10,7 @@ import java.util.Map;
 public class Homes {
     private static final Logger LOGGER = Logger.getLogger(Homes.class);
 
-    private static int countOfCreatedHomes;
-
+    private int countOfCreatedHomes;
     private Map<Address, Garage<Vehicle>> homes;
 
     public Homes() {
@@ -25,7 +25,7 @@ public class Homes {
         this.homes = homes;
     }
 
-    public static int getCountOfCreatedHomes() {
+    public int getCountOfCreatedHomes() {
         return countOfCreatedHomes;
     }
 
@@ -46,10 +46,10 @@ public class Homes {
      */
     public Garage<Vehicle> deleteHome(Address address) {
         if (homes.get(address) == null) {
-            System.out.println("Car with this index does not exist!");
+            LOGGER.info("Car with this index does not exist.");
             return null;
         }
-        System.out.println("Removed home from this address: " + address);
+        LOGGER.info("Removed home from this address: " + address);
         countOfCreatedHomes--;
         return homes.remove(address);
     }
@@ -60,7 +60,7 @@ public class Homes {
      */
     public void deleteHome(int index) {
         if (homes.size() == 0) {
-            System.out.println("There is not any homes.xml");
+            LOGGER.info("There is not any homes.");
         }
 
         if (index >= 0 && index < homes.size()) {
@@ -71,29 +71,30 @@ public class Homes {
                     homes.remove(address);
                     countOfCreatedHomes--;
                     isHomeRemoved = true;
-                    System.out.println("Removed home from this address: " + address);
+                    LOGGER.info("Removed home from this address: " + address);
                     break;
                 }
                 i++;
             }
             if (!isHomeRemoved) {
-                System.out.println("Car with this index does not exist!");
+                LOGGER.info("Car with this index does not exist.");
             }
         }
     }
 
     /**
-     * Show all homes.xml on the screen
+     * Show all homes on the screen
      */
     public void showInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("Homes {").append(System.lineSeparator());
-        sb.append("\tCount of created homes.xml: ").append(countOfCreatedHomes).append(System.lineSeparator());
+        sb.append("\tCount of created homes: ").append(countOfCreatedHomes).append(System.lineSeparator());
         int i = 0;
         for (Address address : homes.keySet()) {
-            sb.append("\t Home #").append(i).append(System.lineSeparator());
+            sb.append("\tHome #").append(i).append(" {").append(System.lineSeparator());
             sb.append("\t\tAddress: ").append(address).append(System.lineSeparator());
             sb.append(homes.get(address)).append(System.lineSeparator());
+            sb.append("\t}").append(System.lineSeparator());
             i++;
         }
         sb.append("}");

@@ -1,4 +1,4 @@
-package com.solvd.car.utils;
+package com.solvd.car.utils.property;
 
 import org.apache.log4j.Logger;
 

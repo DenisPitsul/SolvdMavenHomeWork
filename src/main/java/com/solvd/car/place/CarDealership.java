@@ -1,5 +1,6 @@
 package com.solvd.car.place;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
 
@@ -9,8 +10,9 @@ import java.util.List;
 public class CarDealership<T extends Vehicle> implements CarPlace<T> {
     private static final Logger LOGGER = Logger.getLogger(CarDealership.class);
 
-    private static int countOfCarsInCarDealership;
-
+    @JsonProperty("count")
+    private int countOfCarsInCarDealership;
+    @JsonProperty("selling_cars")
     private List<T> sellingCars;
 
     public CarDealership() {
@@ -25,7 +27,7 @@ public class CarDealership<T extends Vehicle> implements CarPlace<T> {
         this.sellingCars = sellingCars;
     }
 
-    public static int getCountOfCarsInCarDealership() {
+    public int getCountOfCarsInCarDealership() {
         return countOfCarsInCarDealership;
     }
 

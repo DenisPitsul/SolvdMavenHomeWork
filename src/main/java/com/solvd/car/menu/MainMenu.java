@@ -195,7 +195,7 @@ public class MainMenu {
      * Show all parked car on the screen
      */
     public void showCarsOnTheParking() {
-        if (getParkingInstance().getParkingCars() == null || getParkingInstance().getParkingCars().size() == 0) {
+        if (getParkingInstance().getParkedCars() == null || getParkingInstance().getParkedCars().size() == 0) {
             LOGGER.info("There is not any car on the parking.");
             openParkingMenu();
             return;

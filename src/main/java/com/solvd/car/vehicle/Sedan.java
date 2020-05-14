@@ -1,8 +1,10 @@
 package com.solvd.car.vehicle;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.helper.Engine;
 
 public class Sedan extends Car {
+    @JsonProperty("wheel_radius")
     private int wheelRadius;
 
     public Sedan(Engine engine, int maxSpeed, int year) {

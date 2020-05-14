@@ -1,5 +1,9 @@
 package com.solvd.car.menu;
 
+import com.solvd.car.place.CarDealership;
+import com.solvd.car.place.Parking;
+import com.solvd.car.place_io.CarDealershipIO;
+import com.solvd.car.place_io.ParkingIO;
 import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
 
@@ -29,12 +33,14 @@ public class CarDealershipMenu {
             try {
                 in = new Scanner(System.in);
 
-                System.out.println("Finish program input                      -> -1|");
-                System.out.println("Go back input                             -> -2|");
-                System.out.println("-----------------------------------------------|");
-                System.out.println("Add Car to car dealership                 ->  1|");
-                System.out.println("Leave the car dealership input            ->  2|");
-                System.out.println("Show all cars in the car dealership input ->  3|");
+                System.out.println("Finish program input                                 -> -1|");
+                System.out.println("Go back input                                        -> -2|");
+                System.out.println("----------------------------------------------------------|");
+                System.out.println("Add Car to car dealership                            ->  1|");
+                System.out.println("Leave the car dealership input                       ->  2|");
+                System.out.println("Show all cars in the car dealership input            ->  3|");
+                System.out.println("Write cars in car dealership to car_dealership.json  ->  4|");
+                System.out.println("Read car_dealership.json and print                   ->  5|");
 
                 inputIndex = in.nextLine();
 
@@ -55,6 +61,12 @@ public class CarDealershipMenu {
                         mainMenu.showCarsInTheCarDealership();
                         inputCarDealershipOperation();
                         break;
+                    case "4":
+                        writeCarsInCarDealershipToJson();
+                        break;
+                    case "5":
+                        readJsonFileAndPrint();
+                        break;
                     default:
                         LOGGER.info("You have to input number from menu.");
                         inputCarDealershipOperation();
@@ -68,6 +80,20 @@ public class CarDealershipMenu {
                 inputCarDealershipOperation();
             }
         }
+    }
+
+    private void writeCarsInCarDealershipToJson() {
+        mainMenu.getCarDealershipIO().writeToJsonFile(mainMenu.getCarDealershipInstance(),
+                CarDealershipIO.CAR_DEALERSHIP_JSON_FILE_PATH);
+        inputCarDealershipOperation();
+    }
+
+    private void readJsonFileAndPrint() {
+        CarDealership<Vehicle> carDealership = mainMenu.getCarDealershipIO()
+                .readJsonFile(CarDealershipIO.CAR_DEALERSHIP_JSON_FILE_PATH);
+        LOGGER.info("Cars in car dealership from cae_dealership.json");
+        carDealership.showInfo();
+        inputCarDealershipOperation();
     }
 
     /**
@@ -154,7 +180,7 @@ public class CarDealershipMenu {
                     default:
                         if (!inputIndex.equals("") && inputIndex.matches("^([1-9][0-9]*|[0])$")) {
                             int carIndex = Integer.parseInt(inputIndex);
-                            if (carIndex >= 0 && carIndex < mainMenu.getParkingInstance().getParkingCars().size()) {
+                            if (carIndex >= 0 && carIndex < mainMenu.getParkingInstance().getParkedCars().size()) {
                                 mainMenu.getCarDealershipInstance().leaveTheCarDealership(carIndex);
                                 mainMenu.getCarDealershipIO().clearFile();
                                 mainMenu.getCarDealershipIO().writeAllToFile(mainMenu.getCarDealershipInstance());

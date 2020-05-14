@@ -1,6 +1,8 @@
 package com.solvd.car.menu;
 
 import com.solvd.car.exception.TruckOnParkingException;
+import com.solvd.car.place.Parking;
+import com.solvd.car.place_io.ParkingIO;
 import com.solvd.car.vehicle.Truck;
 import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
@@ -37,6 +39,8 @@ public class ParkingMenu {
                 System.out.println("Park Car                           ->  1|");
                 System.out.println("Leave the Parking input            ->  2|");
                 System.out.println("Show all cars on the parking input ->  3|");
+                System.out.println("Write parked cars to parking.json  ->  4|");
+                System.out.println("Read parking.json and print        ->  5|");
 
                 inputIndex = in.nextLine();
 
@@ -57,6 +61,12 @@ public class ParkingMenu {
                         mainMenu.showCarsOnTheParking();
                         inputParkingOperation();
                         break;
+                    case "4":
+                        writeParkedCarsToJson();
+                        break;
+                    case "5":
+                        readJsonFileAndPrint();
+                        break;
                     default:
                         LOGGER.info("You have to input number from menu.");
                         inputParkingOperation();
@@ -70,6 +80,18 @@ public class ParkingMenu {
                 inputParkingOperation();
             }
         }
+    }
+
+    private void writeParkedCarsToJson() {
+        mainMenu.getParkingIO().writeToJsonFile(mainMenu.getParkingInstance(), ParkingIO.PARKING_JSON_FILE_PATH);
+        inputParkingOperation();
+    }
+
+    private void readJsonFileAndPrint() {
+        Parking<Vehicle> parking = mainMenu.getParkingIO().readJsonFile(ParkingIO.PARKING_JSON_FILE_PATH);
+        LOGGER.info("Parked cars from parking.json");
+        parking.showInfo();
+        inputParkingOperation();
     }
 
     /**
@@ -164,7 +186,7 @@ public class ParkingMenu {
                     default:
                         if (!inputIndex.equals("")) {
                             int carIndex = Integer.parseInt(inputIndex);
-                            if (carIndex >= 0 && carIndex < mainMenu.getParkingInstance().getParkingCars().size()) {
+                            if (carIndex >= 0 && carIndex < mainMenu.getParkingInstance().getParkedCars().size()) {
                                 mainMenu.getParkingInstance().leaveTheParking(carIndex);
                                 mainMenu.getParkingIO().clearFile();
                                 mainMenu.getParkingIO().writeAllToFile(mainMenu.getParkingInstance());

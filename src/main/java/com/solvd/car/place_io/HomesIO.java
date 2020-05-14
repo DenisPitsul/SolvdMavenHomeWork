@@ -1,21 +1,35 @@
 package com.solvd.car.place_io;
 
-import com.solvd.car.place.Address;
-import com.solvd.car.place.Garage;
-import com.solvd.car.place.Homes;
-import com.solvd.car.utils.FileHelper;
-import com.solvd.car.utils.FileIO;
+import com.solvd.car.place.*;
+import com.solvd.car.utils.json.*;
+import com.solvd.car.utils.json.model.HomeReadPOJO;
+import com.solvd.car.utils.json.model.HomeWritePOJO;
+import com.solvd.car.utils.json.model.HomesReadPOJO;
+import com.solvd.car.utils.json.model.HomesWritePOJO;
+import com.solvd.car.utils.text_file.FileHelper;
+import com.solvd.car.utils.text_file.FileIO;
+import com.solvd.car.place_io.helper.FileOperation;
+import com.solvd.car.place_io.helper.JsonOperation;
 import com.solvd.car.vehicle.Vehicle;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class HomesIO {
-    public static final String HOMES_FILE_PATH = "src" + FileHelper.SEPARATOR + "main" + FileHelper.SEPARATOR + "resources"
-            + FileHelper.SEPARATOR + "data" + FileHelper.SEPARATOR + "text_files" + FileHelper.SEPARATOR + "homes.txt";
+public class HomesIO implements FileOperation<Homes>, JsonOperation<Homes> {
+    public static final String HOMES_FILE_PATH = "src"
+            + FileHelper.SEPARATOR + "main"
+            + FileHelper.SEPARATOR + "resources"
+            + FileHelper.SEPARATOR + "data"
+            + FileHelper.SEPARATOR + "text"
+            + FileHelper.SEPARATOR + "homes.txt";
+    public static final String HOMES_JSON_FILE_PATH = "src"
+            + FileHelper.SEPARATOR + "main"
+            + FileHelper.SEPARATOR + "resources"
+            + FileHelper.SEPARATOR + "data"
+            + FileHelper.SEPARATOR + "json"
+            + FileHelper.SEPARATOR + "homes.json";
 
     private File file;
     private AddressIO addressIO;
@@ -35,14 +49,32 @@ public class HomesIO {
         return file.getPath();
     }
 
-    public void writeStringToFile(String str) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-            writer.write(str);
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public void writeToJsonFile(Homes homes, String filePath) {
+        List<HomeWritePOJO> homeWritePOJOList = new ArrayList<>();
+        for (Address address: homes.getHomes().keySet()) {
+            HomeWritePOJO homeWritePOJO = new HomeWritePOJO();
+            homeWritePOJO.setAddress(address);
+            homeWritePOJO.setGarage(homes.getHomes().get(address));
+
+            homeWritePOJOList.add(homeWritePOJO);
         }
+        HomesWritePOJO homesWritePOJO = new HomesWritePOJO();
+        homesWritePOJO.setCountOfCreatedHomes(homes.getCountOfCreatedHomes());
+        homesWritePOJO.setHomes(homeWritePOJOList);
+
+        FileIO.createFileIfItDoesNotExist(filePath);
+        JsonConverter.convertJavaToJsonFile(homesWritePOJO, filePath);
+    }
+
+    @Override
+    public Homes readJsonFile(String filePath) {
+        HomesReadPOJO homesReadPOJO = JsonConverter.convertJsonFileToHomesPOJO(filePath);
+        Homes homes = new Homes();
+        for (HomeReadPOJO homeReadPOJO: homesReadPOJO.getHomes()) {
+            homes.addHome(homeReadPOJO.getAddress(), Garage.getGarageFromGaragePOJO(homeReadPOJO.getGarage()));
+        }
+        return homes;
     }
 
     public void writeToFile(Map.Entry<Address, Garage<Vehicle>> home) {
@@ -56,6 +88,7 @@ public class HomesIO {
         FileIO.writeToFile(getFilePath(), sb.toString());
     }
 
+    @Override
     public void writeAllToFile(Homes homes) {
         StringBuilder sb = new StringBuilder();
 
@@ -83,6 +116,7 @@ public class HomesIO {
         return sb.toString();
     }
 
+    @Override
     public Homes readAllFromFile() {
         Homes homes = new Homes();
         Address address = null;
@@ -125,7 +159,9 @@ public class HomesIO {
         return homes;
     }
 
+    @Override
     public void clearFile() {
         FileIO.clearFile(getFilePath());
     }
+
 }

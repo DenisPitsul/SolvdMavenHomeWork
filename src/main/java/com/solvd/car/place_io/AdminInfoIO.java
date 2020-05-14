@@ -1,13 +1,17 @@
 package com.solvd.car.place_io;
 
-import com.solvd.car.utils.FileHelper;
-import com.solvd.car.utils.PropertyIO;
+import com.solvd.car.utils.text_file.FileHelper;
+import com.solvd.car.utils.property.PropertyIO;
 
 import java.io.File;
 
 public class AdminInfoIO {
-    public static final String ADMIN_INFO_FILE_PATH = "src" + FileHelper.SEPARATOR + "main" + FileHelper.SEPARATOR + "resources"
-            + FileHelper.SEPARATOR + "data" + FileHelper.SEPARATOR + "properties" + FileHelper.SEPARATOR + "admin_info.properties";
+    public static final String ADMIN_INFO_FILE_PATH = "src"
+            + FileHelper.SEPARATOR + "main"
+            + FileHelper.SEPARATOR + "resources"
+            + FileHelper.SEPARATOR + "data"
+            + FileHelper.SEPARATOR + "properties"
+            + FileHelper.SEPARATOR + "admin_info.properties";
 
     private File file;
 

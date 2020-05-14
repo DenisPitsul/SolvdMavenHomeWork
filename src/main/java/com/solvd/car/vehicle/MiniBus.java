@@ -1,9 +1,13 @@
 package com.solvd.car.vehicle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.helper.Engine;
 
 public class MiniBus extends Car {
+    @JsonProperty("passenger")
     private boolean isPassenger;
+    @JsonProperty("there_back_view_camera")
     private boolean isThereBackWindows;
 
     public MiniBus(Engine engine, int maxSpeed, int year) {
@@ -27,6 +31,7 @@ public class MiniBus extends Car {
         isPassenger = passenger;
     }
 
+    @JsonIgnore
     public boolean isThereBackWindows() {
         return isThereBackWindows;
     }

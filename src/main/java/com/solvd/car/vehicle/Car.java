@@ -1,5 +1,7 @@
 package com.solvd.car.vehicle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.car.vehicle.helper.Engine;
 import org.apache.log4j.Logger;
 
@@ -8,9 +10,11 @@ public class Car extends Vehicle {
 
     private String color;
     private String number;
+    @JsonProperty("max_speed")
     private int maxSpeed;
     private int year;
 
+    @JsonIgnore
     private int velocity;
 
     public Car(Engine engine, String color, String number, int maxSpeed, int year) {

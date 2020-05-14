@@ -1,6 +1,10 @@
 package com.solvd.car.vehicle.final_car;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.solvd.car.utils.json.model.CarPOJO;
 import com.solvd.car.vehicle.SUV;
+import com.solvd.car.vehicle.Vehicle;
 import com.solvd.car.vehicle.helper.Engine;
 import com.solvd.car.vehicle.interfaces.Car;
 import com.solvd.car.vehicle.interfaces.CarModel;
@@ -9,6 +13,7 @@ import org.apache.log4j.Logger;
 public final class ToyotaLandCruiser extends SUV implements CarModel, Car {
     private static final Logger LOGGER = Logger.getLogger(ToyotaLandCruiser.class);
 
+    @JsonProperty("there_back_view_camera")
     private boolean isThereBackViewCamera;
 
     public ToyotaLandCruiser(int maxSpeed, int year) {
@@ -29,6 +34,7 @@ public final class ToyotaLandCruiser extends SUV implements CarModel, Car {
         this.isThereBackViewCamera = true;
     }
 
+    @JsonIgnore
     public boolean isThereBackViewCamera() {
         return isThereBackViewCamera;
     }
@@ -40,6 +46,21 @@ public final class ToyotaLandCruiser extends SUV implements CarModel, Car {
     @Override
     public void setClearanceLength(int clearanceLength) {
         super.setClearanceLength(clearanceLength + 5);
+    }
+
+    public static ToyotaLandCruiser initToyotaLandCruiserFromCarPOJO(CarPOJO carPOJO) {
+        ToyotaLandCruiser toyotaLandCruiser = new ToyotaLandCruiser();
+
+        toyotaLandCruiser.setEngine(Vehicle.fromStringToEngine(carPOJO.getEngine()));
+        toyotaLandCruiser.setColor(carPOJO.getColor());
+        toyotaLandCruiser.setNumber(carPOJO.getNumber());
+        toyotaLandCruiser.setMaxSpeed(carPOJO.getMaxSpeed());
+        toyotaLandCruiser.setYear(carPOJO.getYear());
+        toyotaLandCruiser.setThereTopTrunk(carPOJO.isThereTopTrunk());
+        toyotaLandCruiser.setClearanceLength(carPOJO.getClearanceLength());
+        toyotaLandCruiser.setThereBackViewCamera(carPOJO.isThereBackViewCamera());
+
+        return toyotaLandCruiser;
     }
 
     @Override

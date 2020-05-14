@@ -1,5 +1,7 @@
 package com.solvd.car.place;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Address {
@@ -7,6 +9,7 @@ public class Address {
     private String district;
     private String village;
     private String street;
+    @JsonProperty("house_address")
     private int houseAddress;
 
     public Address(String city, String district, String village, String street, int houseAddress) {
@@ -17,8 +20,7 @@ public class Address {
         this.houseAddress = houseAddress;
     }
 
-    public Address() {
-    }
+    public Address() { }
 
     public String getCity() {
         return city;

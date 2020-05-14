@@ -2,6 +2,10 @@ package com.solvd.car.menu;
 
 import com.solvd.car.place.Address;
 import com.solvd.car.place.Garage;
+import com.solvd.car.place.Homes;
+import com.solvd.car.place.Parking;
+import com.solvd.car.place_io.HomesIO;
+import com.solvd.car.place_io.ParkingIO;
 import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
 
@@ -100,6 +104,8 @@ public class HomesMenu {
                 System.out.println("Create home input                  ->  1|");
                 System.out.println("Delete home input                  ->  2|");
                 System.out.println("Show info about all homes          ->  3|");
+                System.out.println("Write all homes to homes.json      ->  4|");
+                System.out.println("Read homes.json and print          ->  5|");
 
                 inputIndex = in.nextLine();
 
@@ -121,6 +127,12 @@ public class HomesMenu {
                         mainMenu.showAllHomes();
                         inputHomesOperation();
                         break;
+                    case "4":
+                        writeHomesToJson();
+                        break;
+                    case "5":
+                        readJsonFileAndPrint();
+                        break;
                     default:
                         LOGGER.info("You have to input number from menu.");
                         inputHomesOperation();
@@ -134,6 +146,18 @@ public class HomesMenu {
                 inputHomesOperation();
             }
         }
+    }
+
+    private void writeHomesToJson() {
+        mainMenu.getHomesIO().writeToJsonFile(mainMenu.getHomesInstance(), HomesIO.HOMES_JSON_FILE_PATH);
+        inputHomesOperation();
+    }
+
+    private void readJsonFileAndPrint() {
+        Homes homes = mainMenu.getHomesIO().readJsonFile(HomesIO.HOMES_JSON_FILE_PATH);
+        LOGGER.info("All homes from homes.json");
+        homes.showInfo();
+        inputHomesOperation();
     }
 
     /**

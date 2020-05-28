@@ -1,4 +1,7 @@
 package com.solvd.car.menu;
+
+import com.solvd.car.odb.dao.DAOFactory;
+import com.solvd.car.odb.dao.car.ICarDAO;
 import com.solvd.car.place.*;
 import com.solvd.car.place_io.AdminInfoIO;
 import com.solvd.car.place_io.CarDealershipIO;
@@ -7,6 +10,7 @@ import com.solvd.car.place_io.ParkingIO;
 import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
 
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +35,8 @@ public class MainMenu {
     private HomesIO homesIO;
     private AdminInfoIO adminInfoIO;
 
+    private ICarDAO carDAO;
+
     private Scanner in;
     private String inputIndex;
 
@@ -42,6 +48,13 @@ public class MainMenu {
         parking = parkingIO.readAllFromFile();
         carDealership = carDealershipIO.readAllFromFile();
         homes = homesIO.readAllFromFile();
+
+        setCarDao();
+    }
+
+    private void setCarDao() {
+        this.carDAO = DAOFactory.getInstance().getCarDAO();
+        LOGGER.debug("Cars from database: " + carDAO.getAll().toString());
     }
 
     /**

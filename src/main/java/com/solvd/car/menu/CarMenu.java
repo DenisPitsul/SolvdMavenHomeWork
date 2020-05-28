@@ -1,6 +1,12 @@
 package com.solvd.car.menu;
 
 import com.solvd.car.factory_method.FactoryMethodCar;
+import com.solvd.car.odb.dao.DAOFactory;
+import com.solvd.car.odb.dao.car.CarDAO;
+import com.solvd.car.odb.dao.car.ICarDAO;
+import com.solvd.car.odb.entity.Car;
+import com.solvd.car.odb.entity.CarDetail;
+import com.solvd.car.odb.entity.Engine;
 import com.solvd.car.vehicle.Vehicle;
 import com.solvd.car.vehicle.final_car.AudiA6;
 import com.solvd.car.vehicle.final_car.MercedesVito;
@@ -9,6 +15,8 @@ import com.solvd.car.vehicle.final_car.ToyotaLandCruiser;
 import com.solvd.car.vehicle.helper.CarModel;
 import org.apache.log4j.Logger;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -22,8 +30,15 @@ public class CarMenu {
     private MainMenu mainMenu;
     private String inputIndex;
 
-    public CarMenu(MainMenu mainMenu) {
+    private ICarDAO carDAO;
+
+    public CarMenu(MainMenu mainMenu)  {
         this.mainMenu = mainMenu;
+        setCarDao();
+    }
+
+    private void setCarDao() {
+        this.carDAO = DAOFactory.getInstance().getCarDAO();
     }
 
     /**
@@ -72,7 +87,13 @@ public class CarMenu {
                         chooseCreateType(CarModel.TESLA_SEMI);
                         break;
                     case "5":
-                        chooseCreateType(CarModel.DEFAULT);
+                        Vehicle car = FactoryMethodCar.createCar(CarModel.DEFAULT);
+                        mainMenu.getCarListInstance().add(car);
+
+                        AudiA6 audiA6 = (AudiA6) car;
+                        addAudiA6ToDataBase(audiA6);
+
+                        inputCarType();
                         break;
                     case "6":
                         mainMenu.showAllCars();
@@ -120,18 +141,44 @@ public class CarMenu {
                         inputCarType();
                         break;
                     case "1":
-                        if (carModel == CarModel.AUDI_A6)
-                            createAudiA6Form(0, new AudiA6());
-                        else if (carModel == CarModel.MERCEDES_VITO)
-                            createMercedesVitoForm(0, new MercedesVito());
-                        else if (carModel == CarModel.TOYOTA_LAND_CRUISER)
-                            createToyotaLandCruiserForm(0, new ToyotaLandCruiser());
-                        else if (carModel == CarModel.TESLA_SEMI)
-                            createTeslaSemiForm(0, new TeslaSemi());
+                        switch (carModel) {
+                            case AUDI_A6:
+                                createAudiA6Form(0, new AudiA6());
+                                break;
+                            case MERCEDES_VITO:
+                                createMercedesVitoForm(0, new MercedesVito());
+                                break;
+                            case TOYOTA_LAND_CRUISER:
+                                createToyotaLandCruiserForm(0, new ToyotaLandCruiser());
+                                break;
+                            case TESLA_SEMI:
+                                createTeslaSemiForm(0, new TeslaSemi());
+                                break;
+                        }
                         break;
                     case "2":
                         Vehicle car = FactoryMethodCar.createCar(carModel);
                         mainMenu.getCarListInstance().add(car);
+
+                        switch (carModel) {
+                            case AUDI_A6:
+                                AudiA6 audiA6 = (AudiA6) car;
+                                addAudiA6ToDataBase(audiA6);
+                                break;
+                            case MERCEDES_VITO:
+                                MercedesVito mercedesVito = (MercedesVito) car;
+                                addMercedesVitoToDataBase(mercedesVito);
+                                break;
+                            case TOYOTA_LAND_CRUISER:
+                                ToyotaLandCruiser toyotaLandCruiser = (ToyotaLandCruiser) car;
+                                addToyotaLandCruiserToDataBase(toyotaLandCruiser);
+                                break;
+                            case TESLA_SEMI:
+                                TeslaSemi teslaSemi = (TeslaSemi) car;
+                                addTeslaSemiToDataBase(teslaSemi);
+                                break;
+                        }
+
                         inputCarType();
                         break;
                     default:
@@ -146,6 +193,95 @@ public class CarMenu {
                 chooseCreateType(carModel);
             }
         }
+    }
+
+    private void addAudiA6ToDataBase(AudiA6 audiA6) {
+        Car car = new Car();
+        car.setModel(audiA6.getCarModel());
+        car.setColor(audiA6.getColor());
+        car.setNumber(audiA6.getNumber());
+        car.setMaxSpeed(audiA6.getMaxSpeed());
+        car.setYear(audiA6.getYear());
+
+        Engine engine = new Engine();
+        engine.setName(audiA6.getEngine().getName());
+        engine.setType(audiA6.getEngine().getType());
+        car.setEngine(engine);
+
+        CarDetail carDetail = new CarDetail();
+        carDetail.setWheelRadius(audiA6.getWheelRadius());
+        carDetail.setSalon(audiA6.getSalon());
+        carDetail.setThereBackViewCamera(audiA6.isThereBackViewCamera());
+        car.setCarDetail(carDetail);
+
+        LOGGER.info("audi a6");
+
+        carDAO.add(car);
+    }
+
+    private void addMercedesVitoToDataBase(MercedesVito mercedesVito) {
+        Car car = new Car();
+        car.setModel(mercedesVito.getCarModel());
+        car.setColor(mercedesVito.getColor());
+        car.setNumber(mercedesVito.getNumber());
+        car.setMaxSpeed(mercedesVito.getMaxSpeed());
+        car.setYear(mercedesVito.getYear());
+
+        Engine engine = new Engine();
+        engine.setName(mercedesVito.getEngine().getName());
+        engine.setType(mercedesVito.getEngine().getType());
+        car.setEngine(engine);
+
+        CarDetail carDetail = new CarDetail();
+        carDetail.setPassenger(mercedesVito.isPassenger());
+        carDetail.setThereBackWindows(mercedesVito.isThereBackWindows());
+        carDetail.setPassengerSeatsCount(mercedesVito.getPassengerSeatsCount());
+        car.setCarDetail(carDetail);
+
+        carDAO.add(car);
+    }
+
+    private void addToyotaLandCruiserToDataBase(ToyotaLandCruiser toyotaLandCruiser) {
+        Car car = new Car();
+        car.setModel(toyotaLandCruiser.getCarModel());
+        car.setColor(toyotaLandCruiser.getColor());
+        car.setNumber(toyotaLandCruiser.getNumber());
+        car.setMaxSpeed(toyotaLandCruiser.getMaxSpeed());
+        car.setYear(toyotaLandCruiser.getYear());
+
+        Engine engine = new Engine();
+        engine.setName(toyotaLandCruiser.getEngine().getName());
+        engine.setType(toyotaLandCruiser.getEngine().getType());
+        car.setEngine(engine);
+
+        CarDetail carDetail = new CarDetail();
+        carDetail.setThereTopTrunk(toyotaLandCruiser.isThereTopTrunk());
+        carDetail.setClearanceLength(toyotaLandCruiser.getClearanceLength());
+        carDetail.setThereBackViewCamera(toyotaLandCruiser.isThereBackViewCamera());
+        car.setCarDetail(carDetail);
+
+        carDAO.add(car);
+    }
+
+    private void addTeslaSemiToDataBase(TeslaSemi teslaSemi) {
+        Car car = new Car();
+        car.setModel(teslaSemi.getCarModel());
+        car.setColor(teslaSemi.getColor());
+        car.setNumber(teslaSemi.getNumber());
+        car.setMaxSpeed(teslaSemi.getMaxSpeed());
+        car.setYear(teslaSemi.getYear());
+
+        Engine engine = new Engine();
+        engine.setName(teslaSemi.getEngine().getName());
+        engine.setType(teslaSemi.getEngine().getType());
+        car.setEngine(engine);
+
+        CarDetail carDetail = new CarDetail();
+        carDetail.setLiftingCapacity(teslaSemi.getLiftingCapacity());
+        carDetail.setBatteryPowerReserve(teslaSemi.getBatteryPowerReserve());
+        car.setCarDetail(carDetail);
+
+        carDAO.add(car);
     }
 
     /**
@@ -266,6 +402,9 @@ public class CarMenu {
                     LOGGER.info("Audi A6 created.");
                     LOGGER.debug(audiA6);
                     mainMenu.getCarListInstance().add(audiA6);
+
+                    addAudiA6ToDataBase(audiA6);
+
                     mainMenu.openMainMenu();
                     propertyNumber++;
                 }
@@ -396,6 +535,9 @@ public class CarMenu {
                     LOGGER.info("Mercedes Vito created.");
                     LOGGER.debug(mercedesVito);
                     mainMenu.getCarListInstance().add(mercedesVito);
+
+                    addMercedesVitoToDataBase(mercedesVito);
+
                     mainMenu.openMainMenu();
                     propertyNumber++;
                 }
@@ -526,6 +668,9 @@ public class CarMenu {
                     LOGGER.info("Toyota Land Cruiser created.");
                     LOGGER.debug(toyotaLandCruiser);
                     mainMenu.getCarListInstance().add(toyotaLandCruiser);
+
+                    addToyotaLandCruiserToDataBase(toyotaLandCruiser);
+
                     mainMenu.openMainMenu();
                     propertyNumber++;
                 }
@@ -656,6 +801,9 @@ public class CarMenu {
                     LOGGER.info("Tesla Semi created.");
                     LOGGER.debug(teslaSemi);
                     mainMenu.getCarListInstance().add(teslaSemi);
+
+                    addTeslaSemiToDataBase(teslaSemi);
+
                     mainMenu.openMainMenu();
                     propertyNumber++;
                 }

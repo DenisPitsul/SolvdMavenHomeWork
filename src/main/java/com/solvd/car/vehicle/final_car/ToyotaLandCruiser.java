@@ -28,7 +28,7 @@ public final class ToyotaLandCruiser extends SUV implements CarModel, Car {
     }
 
     public ToyotaLandCruiser() {
-        setEngine(Engine.V6_TURBO);
+        setEngine(Engine.V8);
         setClearanceLength(50);
         setThereTopTrunk(true);
         this.isThereBackViewCamera = true;

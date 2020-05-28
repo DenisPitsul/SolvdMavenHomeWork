@@ -7,7 +7,7 @@ import com.solvd.car.vehicle.helper.Engine;
 public class MiniBus extends Car {
     @JsonProperty("passenger")
     private boolean isPassenger;
-    @JsonProperty("there_back_view_camera")
+    @JsonProperty("there_back_windows")
     private boolean isThereBackWindows;
 
     public MiniBus(Engine engine, int maxSpeed, int year) {

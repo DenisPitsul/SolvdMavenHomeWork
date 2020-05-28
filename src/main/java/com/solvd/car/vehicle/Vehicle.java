@@ -14,8 +14,8 @@ public abstract class Vehicle {
     public Vehicle() {
     }
 
-    public String getEngine() {
-        return engine.getName();
+    public Engine getEngine() {
+        return engine;
     }
 
     public void setEngine(Engine engine) {

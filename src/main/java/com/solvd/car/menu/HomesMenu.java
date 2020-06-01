@@ -1,24 +1,18 @@
 package com.solvd.car.menu;
 
-import com.solvd.car.place.Address;
-import com.solvd.car.place.Garage;
+import com.solvd.car.odb.entity.*;
+import com.solvd.car.place.GarageOfHome;
 import com.solvd.car.place.Homes;
-import com.solvd.car.place.Parking;
-import com.solvd.car.place_io.HomesIO;
-import com.solvd.car.place_io.ParkingIO;
-import com.solvd.car.vehicle.Vehicle;
 import org.apache.log4j.Logger;
 
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class HomesMenu {
     private static final Logger LOGGER = Logger.getLogger(HomesMenu.class);
     private static int houseNumber = (int) (Math.random()*200+1);
 
     private Address address;
-    private Garage<Vehicle> garage;
+    private GarageOfHome garageOfHome;
 
     private AddressMenu addressMenu;
     private GarageMenu garageMenu;
@@ -39,12 +33,12 @@ public class HomesMenu {
         this.address = address;
     }
 
-    public Garage<Vehicle> getGarage() {
-        return garage;
+    public GarageOfHome getGarageOfHome() {
+        return garageOfHome;
     }
 
-    public void setGarage(Garage<Vehicle> garage) {
-        this.garage = garage;
+    public void setGarageOfHome(GarageOfHome garageOfHome) {
+        this.garageOfHome = garageOfHome;
     }
 
     public MainMenu getMainMenu() {
@@ -68,7 +62,7 @@ public class HomesMenu {
      */
     private GarageMenu getGarageMenuInstance() {
         if (garageMenu == null) {
-            garageMenu = new GarageMenu(this);
+            garageMenu = new GarageMenu(mainMenu, this);
         }
         garageMenu.setCarInTheGarage(false);
         return garageMenu;
@@ -78,12 +72,12 @@ public class HomesMenu {
      * Show all added car in current garage on the screen
      */
     public void showCarInTheGarage() {
-        if (getGarage().getCarsInGarage() == null || getGarage().getCarsInGarage().size() == 0) {
+        if (getGarageOfHome().getCarsInGarage() == null || getGarageOfHome().getCarsInGarage().size() == 0) {
             LOGGER.info("There is not any car in the garage.");
             inputHomesOperation();
             return;
         }
-        garage.showInfo();
+        garageOfHome.showInfo();
     }
 
     /**
@@ -104,8 +98,6 @@ public class HomesMenu {
                 System.out.println("Create home input                  ->  1|");
                 System.out.println("Delete home input                  ->  2|");
                 System.out.println("Show info about all homes          ->  3|");
-                System.out.println("Write all homes to homes.json      ->  4|");
-                System.out.println("Read homes.json and print          ->  5|");
 
                 inputIndex = in.nextLine();
 
@@ -117,7 +109,7 @@ public class HomesMenu {
                         mainMenu.openMainMenu();
                         break;
                     case "1":
-                        garage = new Garage<>();
+                        garageOfHome = new GarageOfHome();
                         openCreateHomeMenu();
                         break;
                     case "2":
@@ -126,12 +118,6 @@ public class HomesMenu {
                     case "3":
                         mainMenu.showAllHomes();
                         inputHomesOperation();
-                        break;
-                    case "4":
-                        writeHomesToJson();
-                        break;
-                    case "5":
-                        readJsonFileAndPrint();
                         break;
                     default:
                         LOGGER.info("You have to input number from menu.");
@@ -146,18 +132,6 @@ public class HomesMenu {
                 inputHomesOperation();
             }
         }
-    }
-
-    private void writeHomesToJson() {
-        mainMenu.getHomesIO().writeToJsonFile(mainMenu.getHomesInstance(), HomesIO.HOMES_JSON_FILE_PATH);
-        inputHomesOperation();
-    }
-
-    private void readJsonFileAndPrint() {
-        Homes homes = mainMenu.getHomesIO().readJsonFile(HomesIO.HOMES_JSON_FILE_PATH);
-        LOGGER.info("All homes from homes.json");
-        homes.showInfo();
-        inputHomesOperation();
     }
 
     /**
@@ -192,11 +166,11 @@ public class HomesMenu {
                         openAddressMenu();
                         break;
                     case "2":
-                        address = new Address.Builder()
-                                .setCity("Chernivtsy")
-                                .setStreet("Nebesnoy sotny")
-                                .setHouseNumber(houseNumber)
-                                .build();
+                        address = new Address();
+                        address.setCity("Chernivtsy");
+                        address.setStreet("Nebesnoy sotny");
+                        address.setHouseNumber(houseNumber);
+
                         houseNumber++;
                         openGarageMenu();
                         break;
@@ -242,11 +216,17 @@ public class HomesMenu {
                         break;
                     default:
                         if (!inputIndex.equals("")) {
-                            int carIndex = Integer.parseInt(inputIndex);
-                            if (carIndex >= 0 && carIndex < mainMenu.getHomesInstance().getHomes().size()) {
-                                mainMenu.getHomesInstance().deleteHome(carIndex);
-                                mainMenu.getHomesIO().clearFile();
-                                mainMenu.getHomesIO().writeAllToFile(mainMenu.getHomesInstance());
+                            int homeIndex = Integer.parseInt(inputIndex);
+                            if (homeIndex >= 0 && homeIndex < mainMenu.getHomesInstance().getHomes().size()) {
+
+                                List<CarInGarage> carInGarageList = mainMenu.getHomesInstance()
+                                        .getCarsInGarageByHomeIndex(homeIndex);
+                                Address address = carInGarageList.get(0).getGarage().getHome().getAddress();
+                                deleteHome(carInGarageList);
+                                Homes homes = mainMenu.getAllHomesFromDatabase();
+                                mainMenu.setHomesInstance(homes);
+                                LOGGER.debug("Home with address: " + address + " deleted.");
+
                                 inputHomesOperation();
                             }
                             else {
@@ -275,7 +255,7 @@ public class HomesMenu {
      */
     public void openAddressMenu() {
         AddressMenu addressMenu = getAddressMenuInstance();
-        addressMenu.inputAddressManually(0, new Address.Builder());
+        addressMenu.inputAddressManually(0, new Address());
     }
 
     /**
@@ -287,15 +267,63 @@ public class HomesMenu {
     }
 
     /**
-     * Add home with address and garage to map
+     *  1 - Create address in database and get this(last) address from data base because we need id from address
+     *  2 - Create home in database and get this home
+     *  3 - Create garage in database and get this garage
+     *  4 - Add cars to cars_in_garage in database with lastGarage
      */
     public void createHome() {
-        mainMenu.getHomesInstance().getHomes().put(address, garage);
-        for (Map.Entry<Address, Garage<Vehicle>> home: mainMenu.getHomesInstance().getHomes().entrySet()) {
-            if (address.equals(home.getKey())) {
-                mainMenu.getHomesIO().writeToFile(home);
-                break;
-            }
+        // 1
+        mainMenu.getAddressServiceInstance().addAddress(address);
+        Address lastAddress = mainMenu.getAddressServiceInstance().getLastAddress();
+
+        // 2
+        Home home = new Home();
+        home.setAddress(lastAddress);
+        mainMenu.getHomeServiceInstance().addHome(home);
+        Home lastHome = mainMenu.getHomeServiceInstance().getLastHome();
+
+        // 3
+        Garage garageInstance = new Garage();
+        garageInstance.setBig(garageOfHome.isBig());
+        garageInstance.setHome(lastHome);
+        mainMenu.getGarageServiceInstance().addGarage(garageInstance);
+        Garage lastGarage = mainMenu.getGarageServiceInstance().getLastGarage();
+
+        // 4
+        for (CarInGarage carInGarage: garageOfHome.getCarsInGarage()) {
+            carInGarage.setGarage(lastGarage);
+            mainMenu.getCarsInGarageServiceInstance().addCarInGarage(carInGarage);
         }
+    }
+
+    /**
+     *
+     * Delete all data related to the home in reverse order as we added this data to home
+     *
+     * 1 - get garage by first car in garage because garage has at least 1 car in garage and delete all cars in garage
+     * 2 - get home by garage and delete this garage
+     * 3 - get address bu home and delete this home
+     * 4 - delete this address
+     *
+     * @param carInGarageList - cars in garage in current home
+     */
+    public void deleteHome(List<CarInGarage> carInGarageList) {
+        // 1
+        Garage garageFromDatabase = carInGarageList.get(0).getGarage();
+        for (CarInGarage carInGarage: carInGarageList) {
+            mainMenu.getCarsInGarageServiceInstance().deleteCarInGarage(carInGarage);
+        }
+
+        // 2
+        Home home = garageFromDatabase.getHome();
+        mainMenu.getGarageServiceInstance().deleteGarage(garageFromDatabase);
+
+        // 3
+        Address address = home.getAddress();
+        mainMenu.getHomeServiceInstance().deleteHome(home);
+
+        // 4
+        mainMenu.getAddressServiceInstance().deleteAddress(address);
     }
 }

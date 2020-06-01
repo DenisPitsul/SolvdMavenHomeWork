@@ -1,27 +1,28 @@
 package com.solvd.car.place;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.solvd.car.vehicle.Vehicle;
+import com.solvd.car.odb.entity.Address;
+import com.solvd.car.odb.entity.CarInGarage;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Homes {
     private static final Logger LOGGER = Logger.getLogger(Homes.class);
 
     private int countOfCreatedHomes;
-    private Map<Address, Garage<Vehicle>> homes;
+    private Map<Address, GarageOfHome> homes;
 
     public Homes() {
         homes = new HashMap<>();
     }
 
-    public Map<Address, Garage<Vehicle>> getHomes() {
+    public Map<Address, GarageOfHome> getHomes() {
         return homes;
     }
 
-    public void setHomes(Map<Address, Garage<Vehicle>> homes) {
+    public void setHomes(Map<Address, GarageOfHome> homes) {
         this.homes = homes;
     }
 
@@ -32,10 +33,10 @@ public class Homes {
     /**
      * create home by address and garage and add to map
      * @param address key of the homes map
-     * @param garage value of the homes map
+     * @param garageOfHome value of the homes map
      */
-    public void addHome(Address address, Garage<Vehicle> garage) {
-        homes.put(address, garage);
+    public void addHome(Address address, GarageOfHome garageOfHome) {
+        homes.put(address, garageOfHome);
         countOfCreatedHomes++;
     }
 
@@ -44,7 +45,7 @@ public class Homes {
      * @param address of the home which have to delete from the map
      * @return garage of deleted home or null if there weren't any homes.xml in the map with this addres
      */
-    public Garage<Vehicle> deleteHome(Address address) {
+    public GarageOfHome deleteHome(Address address) {
         if (homes.get(address) == null) {
             LOGGER.info("Car with this index does not exist.");
             return null;
@@ -80,6 +81,29 @@ public class Homes {
                 LOGGER.info("Car with this index does not exist.");
             }
         }
+    }
+
+    /**
+     * Delete home from the map by index
+     * @param index -> index of home which have to delete from the map
+     */
+    public List<CarInGarage> getCarsInGarageByHomeIndex(int index) {
+        if (homes.size() == 0) {
+            LOGGER.info("There is not any homes.");
+        }
+
+        List<CarInGarage> carInGarageList = null;
+        if (index >= 0 && index < homes.size()) {
+            int i = 0;
+            for (Address address : homes.keySet()) {
+                if (i == index) {
+                    carInGarageList = homes.get(address).getCarsInGarage();
+                    break;
+                }
+                i++;
+            }
+        }
+        return carInGarageList;
     }
 
     /**

@@ -1,8 +1,9 @@
 package com.solvd.car.menu;
 
 import com.solvd.car.exception.TruckInGarageException;
-import com.solvd.car.vehicle.Truck;
-import com.solvd.car.vehicle.Vehicle;
+import com.solvd.car.odb.entity.Car;
+import com.solvd.car.odb.entity.CarInGarage;
+import com.solvd.car.place.Homes;
 import org.apache.log4j.Logger;
 
 import java.util.InputMismatchException;
@@ -12,12 +13,14 @@ public class GarageMenu {
     private static final Logger LOGGER = Logger.getLogger(GarageMenu.class);
 
     private Scanner in;
+    private MainMenu mainMenu;
     private HomesMenu homesMenu;
     private String inputIndex;
 
     private boolean isCarInTheGarage = false;
 
-    public GarageMenu(HomesMenu homesMenu) {
+    public GarageMenu(MainMenu mainMenu, HomesMenu homesMenu) {
+        this.mainMenu = mainMenu;
         this.homesMenu = homesMenu;
     }
 
@@ -66,8 +69,10 @@ public class GarageMenu {
                         break;
                     case "3":
                         if (isCarInTheGarage) {
-                            LOGGER.info("Home created.");
                             homesMenu.createHome();
+                            Homes homes = mainMenu.getAllHomesFromDatabase();
+                            mainMenu.setHomesInstance(homes);
+                            LOGGER.info("Home created.");
                             homesMenu.inputHomesOperation();
                         }
                         else {
@@ -106,7 +111,7 @@ public class GarageMenu {
             try {
                 in = new Scanner(System.in);
 
-                if (homesMenu.getGarage().isBigGarageValueSetted()) {
+                if (homesMenu.getGarageOfHome().isBigGarageValueSetted()) {
                     propertyNumber = 1;
                 }
 
@@ -127,11 +132,11 @@ public class GarageMenu {
                             inputGarageOperation();
                             break;
                         case "1":
-                            homesMenu.getGarage().setBig(true);
+                            homesMenu.getGarageOfHome().setBig(true);
                             propertyNumber++;
                             break;
                         case "2":
-                            homesMenu.getGarage().setBig(false);
+                            homesMenu.getGarageOfHome().setBig(false);
                             propertyNumber++;
                             break;
                         default:
@@ -162,14 +167,16 @@ public class GarageMenu {
                             if (!inputIndex.equals("")) {
                                 int carIndex = Integer.parseInt(inputIndex);
                                 if (carIndex >= 0 && carIndex < homesMenu.getMainMenu().getCarListInstance().size()) {
-                                    Vehicle vehicle = homesMenu.getMainMenu().getCarListInstance().get(carIndex);
-                                    if (vehicle instanceof Truck && !homesMenu.getGarage().isBig()) {
+                                    Car car = homesMenu.getMainMenu().getCarListInstance().get(carIndex);
+                                    if (car.getModel().equals("Tesla Semi") && !homesMenu.getGarageOfHome().isBig()) {
                                         throw new TruckInGarageException();
                                     }
                                     else {
-                                        homesMenu.getGarage().add(vehicle);
+                                        CarInGarage carInGarage = new CarInGarage();
+                                        carInGarage.setCar(car);
+                                        homesMenu.getGarageOfHome().add(carInGarage);
                                         isCarInTheGarage = true;
-                                        LOGGER.debug("Car " + vehicle.getShortInfo() + " added to garage.");
+                                        LOGGER.debug("Car " + car.getShortInfo() + " added to garage.");
                                         inputGarageOperation();
                                     }
                                 }

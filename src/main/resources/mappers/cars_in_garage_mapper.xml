@@ -1,0 +1,52 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.cars_in_garage.ICarsInGarageDAO">
+    <resultMap id="car_in_garage" type="com.solvd.car.odb.entity.CarInGarage">
+        <id property="id" column="id"/>
+        <association property="car"
+                     column="car_id"
+                     javaType="com.solvd.car.odb.entity.Car"
+                     select="com.solvd.car.odb.dao.car.ICarDAO.getCarById"
+                     fetchType="eager"/>
+        <association property="garage"
+                     column="garage_id"
+                     javaType="com.solvd.car.odb.entity.Garage"
+                     select="com.solvd.car.odb.dao.garage.IGarageDAO.getGarageById"
+                     fetchType="eager"/>
+    </resultMap>
+    <select id="getAllCarsInGarages" resultMap="car_in_garage">
+        select * from cars_in_garage
+        inner join car on cars_in_garage.car_id = car.id
+        inner join garage on cars_in_garage.garage_id = garage.id
+        inner join home on garage.home_id = home.id
+        inner join address on home.address_id = address.id
+    </select>
+    <select id="getCarInGarageById" parameterType="java.lang.Long" resultMap="car_in_garage">
+        select * from cars_in_garage
+        inner join car on cars_in_garage.car_id = car.id
+        inner join garage on cars_in_garage.garage_id = garage.id
+        inner join home on garage.home_id = home.id
+        inner join address on home.address_id = address.id
+        where cars_in_garage.id = #{id}
+    </select>
+    <select id="getCarsInGarageByGarageId" parameterType="java.lang.Long" resultMap="car_in_garage">
+        select * from cars_in_garage
+        inner join car on cars_in_garage.car_id = car.id
+        inner join garage on cars_in_garage.garage_id = garage.id
+        inner join home on garage.home_id = home.id
+        inner join address on home.address_id = address.id
+        where garage.id = #{id}
+    </select>
+    <insert id="addCarInGarage" parameterType="com.solvd.car.odb.entity.CarInGarage">
+        insert into cars_in_garage(car_id, garage_id)
+        values (#{car.id}, #{garage.id})
+    </insert>
+    <delete id="deleteCarInGarage" parameterType="com.solvd.car.odb.entity.CarInGarage">
+        delete from cars_in_garage
+        where id = #{id}
+    </delete>
+    <update id="updateCarInGarage" parameterType="com.solvd.car.odb.entity.CarInGarage">
+        update cars_in_garage
+        set car_id = #{car.id}, garage_id = #{garage.id}
+    </update>
+</mapper>

@@ -1,13 +1,11 @@
 package com.solvd.car.menu;
 
-import com.solvd.car.place.CarDealership;
-import com.solvd.car.place.Parking;
-import com.solvd.car.place_io.CarDealershipIO;
-import com.solvd.car.place_io.ParkingIO;
-import com.solvd.car.vehicle.Vehicle;
+import com.solvd.car.odb.entity.Car;
+import com.solvd.car.odb.entity.SellingCar;
 import org.apache.log4j.Logger;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class CarDealershipMenu {
@@ -39,8 +37,6 @@ public class CarDealershipMenu {
                 System.out.println("Add Car to car dealership                            ->  1|");
                 System.out.println("Leave the car dealership input                       ->  2|");
                 System.out.println("Show all cars in the car dealership input            ->  3|");
-                System.out.println("Write cars in car dealership to car_dealership.json  ->  4|");
-                System.out.println("Read car_dealership.json and print                   ->  5|");
 
                 inputIndex = in.nextLine();
 
@@ -61,12 +57,6 @@ public class CarDealershipMenu {
                         mainMenu.showCarsInTheCarDealership();
                         inputCarDealershipOperation();
                         break;
-                    case "4":
-                        writeCarsInCarDealershipToJson();
-                        break;
-                    case "5":
-                        readJsonFileAndPrint();
-                        break;
                     default:
                         LOGGER.info("You have to input number from menu.");
                         inputCarDealershipOperation();
@@ -80,20 +70,6 @@ public class CarDealershipMenu {
                 inputCarDealershipOperation();
             }
         }
-    }
-
-    private void writeCarsInCarDealershipToJson() {
-        mainMenu.getCarDealershipIO().writeToJsonFile(mainMenu.getCarDealershipInstance(),
-                CarDealershipIO.CAR_DEALERSHIP_JSON_FILE_PATH);
-        inputCarDealershipOperation();
-    }
-
-    private void readJsonFileAndPrint() {
-        CarDealership<Vehicle> carDealership = mainMenu.getCarDealershipIO()
-                .readJsonFile(CarDealershipIO.CAR_DEALERSHIP_JSON_FILE_PATH);
-        LOGGER.info("Cars in car dealership from cae_dealership.json");
-        carDealership.showInfo();
-        inputCarDealershipOperation();
     }
 
     /**
@@ -125,11 +101,20 @@ public class CarDealershipMenu {
                         if (!inputIndex.equals("")) {
                             int carIndex = Integer.parseInt(inputIndex);
                             if (carIndex >= 0 && carIndex < mainMenu.getCarListInstance().size()) {
-                                Vehicle vehicle = mainMenu.getCarListInstance().get(carIndex);
-                                mainMenu.getCarDealershipInstance().add(vehicle);
-                                mainMenu.getCarDealershipIO().writeToFile(vehicle);
-                                LOGGER.debug(vehicle.getShortInfo() + " added to car dealership.");
-                                inputCarDealershipOperation();
+                                Car car = mainMenu.getCarListInstance().get(carIndex);
+
+                                if (isCarAlreadyInTheCarDealership(car)) {
+                                    LOGGER.info(car.getShortInfo() + " is already in the car dealership.");
+                                    openAddCarDealershipMenu();
+                                } else {
+                                    SellingCar sellingCar = new SellingCar();
+                                    sellingCar.setCar(car);
+                                    mainMenu.getCarDealershipServiceInstance().addSellingCar(sellingCar);
+                                    List<SellingCar> sellingCarList = mainMenu.getCarDealershipServiceInstance().getAllSellingCars();
+                                    mainMenu.setCarDealershipInstance(sellingCarList);
+                                    LOGGER.debug(car.getShortInfo() + " added to car dealership.");
+                                    inputCarDealershipOperation();
+                                }
                             }
                             else {
                                 LOGGER.info("Such car does not exist.");
@@ -150,6 +135,17 @@ public class CarDealershipMenu {
                 openAddCarDealershipMenu();
             }
         }
+    }
+
+    private boolean isCarAlreadyInTheCarDealership(Car car) {
+        boolean isCarInTheCarDealership = false;
+        for (SellingCar sellingCar: mainMenu.getCarDealershipInstance().getSellingCars()) {
+            if (car.getId().equals(sellingCar.getCar().getId())) {
+                isCarInTheCarDealership = true;
+                break;
+            }
+        }
+        return isCarInTheCarDealership;
     }
 
     /**
@@ -180,12 +176,14 @@ public class CarDealershipMenu {
                     default:
                         if (!inputIndex.equals("") && inputIndex.matches("^([1-9][0-9]*|[0])$")) {
                             int carIndex = Integer.parseInt(inputIndex);
-                            if (carIndex >= 0 && carIndex < mainMenu.getParkingInstance().getParkedCars().size()) {
-                                mainMenu.getCarDealershipInstance().leaveTheCarDealership(carIndex);
-                                mainMenu.getCarDealershipIO().clearFile();
-                                mainMenu.getCarDealershipIO().writeAllToFile(mainMenu.getCarDealershipInstance());
-                                Vehicle vehicle = mainMenu.getCarListInstance().get(carIndex);
-                                LOGGER.debug(vehicle.getShortInfo() + " left the car dealership.");
+                            if (carIndex >= 0 && carIndex < mainMenu.getCarDealershipInstance().getSellingCars().size()) {
+                                Car car = mainMenu.getCarListInstance().get(carIndex);
+                                SellingCar sellingCar = mainMenu.getCarDealershipInstance().getSellingCars().get(carIndex);
+                                mainMenu.getCarDealershipServiceInstance().deleteSellingCar(sellingCar);
+                                List<SellingCar> sellingCarList = mainMenu.getCarDealershipServiceInstance().getAllSellingCars();
+                                mainMenu.setCarDealershipInstance(sellingCarList);
+
+                                LOGGER.debug(car.getShortInfo() + " left the car dealership.");
                                 inputCarDealershipOperation();
                             }
                             else {

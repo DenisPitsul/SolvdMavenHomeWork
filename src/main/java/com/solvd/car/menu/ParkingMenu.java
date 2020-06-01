@@ -1,13 +1,12 @@
 package com.solvd.car.menu;
 
 import com.solvd.car.exception.TruckOnParkingException;
-import com.solvd.car.place.Parking;
-import com.solvd.car.place_io.ParkingIO;
-import com.solvd.car.vehicle.Truck;
-import com.solvd.car.vehicle.Vehicle;
+import com.solvd.car.odb.entity.Car;
+import com.solvd.car.odb.entity.ParkedCar;
 import org.apache.log4j.Logger;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class ParkingMenu {
@@ -39,8 +38,6 @@ public class ParkingMenu {
                 System.out.println("Park Car                           ->  1|");
                 System.out.println("Leave the Parking input            ->  2|");
                 System.out.println("Show all cars on the parking input ->  3|");
-                System.out.println("Write parked cars to parking.json  ->  4|");
-                System.out.println("Read parking.json and print        ->  5|");
 
                 inputIndex = in.nextLine();
 
@@ -61,12 +58,6 @@ public class ParkingMenu {
                         mainMenu.showCarsOnTheParking();
                         inputParkingOperation();
                         break;
-                    case "4":
-                        writeParkedCarsToJson();
-                        break;
-                    case "5":
-                        readJsonFileAndPrint();
-                        break;
                     default:
                         LOGGER.info("You have to input number from menu.");
                         inputParkingOperation();
@@ -80,18 +71,6 @@ public class ParkingMenu {
                 inputParkingOperation();
             }
         }
-    }
-
-    private void writeParkedCarsToJson() {
-        mainMenu.getParkingIO().writeToJsonFile(mainMenu.getParkingInstance(), ParkingIO.PARKING_JSON_FILE_PATH);
-        inputParkingOperation();
-    }
-
-    private void readJsonFileAndPrint() {
-        Parking<Vehicle> parking = mainMenu.getParkingIO().readJsonFile(ParkingIO.PARKING_JSON_FILE_PATH);
-        LOGGER.info("Parked cars from parking.json");
-        parking.showInfo();
-        inputParkingOperation();
     }
 
     /**
@@ -123,15 +102,23 @@ public class ParkingMenu {
                         if (!inputIndex.equals("")) {
                             int carIndex = Integer.parseInt(inputIndex);
                             if (carIndex >= 0 && carIndex < mainMenu.getCarListInstance().size()) {
-                                Vehicle vehicle = mainMenu.getCarListInstance().get(carIndex);
-                                if (vehicle instanceof Truck) {
+                                Car car = mainMenu.getCarListInstance().get(carIndex);
+                                if (car.getModel().equals("Tesla Semi")) {
                                     throw new TruckOnParkingException();
                                 }
                                 else {
-                                    mainMenu.getParkingInstance().add(vehicle);
-                                    mainMenu.getParkingIO().writeToFile(vehicle);
-                                    LOGGER.debug("Car " + vehicle.getShortInfo() + " has parked.");
-                                    inputParkingOperation();
+                                    if (isCarAlreadyOnTheParking(car)) {
+                                        LOGGER.info(car.getShortInfo() + " is already on the parking.");
+                                        openParkCarMenu();
+                                    } else {
+                                        ParkedCar parkedCar = new ParkedCar();
+                                        parkedCar.setCar(car);
+                                        mainMenu.getParkingServiceInstance().addParkedCar(parkedCar);
+                                        List<ParkedCar> parkedCarList = mainMenu.getParkingServiceInstance().getAllParkedCars();
+                                        mainMenu.setParkingInstance(parkedCarList);
+                                        LOGGER.debug("Car " + car.getShortInfo() + " has parked.");
+                                        inputParkingOperation();
+                                    }
                                 }
 
                             }
@@ -156,6 +143,17 @@ public class ParkingMenu {
                 inputParkingOperation();
             }
         }
+    }
+
+    private boolean isCarAlreadyOnTheParking(Car car) {
+        boolean isCarOnTheParking = false;
+        for (ParkedCar parkedCar: mainMenu.getParkingInstance().getParkedCars()) {
+            if (car.getId().equals(parkedCar.getCar().getId())) {
+                isCarOnTheParking = true;
+                break;
+            }
+        }
+        return isCarOnTheParking;
     }
 
     /**
@@ -187,11 +185,12 @@ public class ParkingMenu {
                         if (!inputIndex.equals("")) {
                             int carIndex = Integer.parseInt(inputIndex);
                             if (carIndex >= 0 && carIndex < mainMenu.getParkingInstance().getParkedCars().size()) {
-                                mainMenu.getParkingInstance().leaveTheParking(carIndex);
-                                mainMenu.getParkingIO().clearFile();
-                                mainMenu.getParkingIO().writeAllToFile(mainMenu.getParkingInstance());
-                                Vehicle vehicle = mainMenu.getCarListInstance().get(carIndex);
-                                LOGGER.debug("Car " + vehicle.getShortInfo() + " left the parking.");
+                                ParkedCar parkedCar = mainMenu.getParkingInstance().getParkedCars().get(carIndex);
+                                mainMenu.getParkingServiceInstance().deleteParkedCar(parkedCar);
+                                List<ParkedCar> parkedCarList = mainMenu.getParkingServiceInstance().getAllParkedCars();
+                                mainMenu.setParkingInstance(parkedCarList);
+
+                                LOGGER.debug("Car " + parkedCar.getCar().getShortInfo() + " left the parking.");
                                 inputParkingOperation();
                             }
                             else {

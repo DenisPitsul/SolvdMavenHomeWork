@@ -1,0 +1,48 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.car_detail.ICarDetailDAO">
+    <resultMap id="car_detail" type="com.solvd.car.odb.entity.CarDetail">
+        <id property='id' column='id'/>
+        <result property='wheelRadius' column='wheel_radius'/>
+        <result property='salon' column='salon'/>
+        <result property='isThereBackViewCamera' column='is_there_back_view_camera'/>
+        <result property='passengerSeatsCount' column='passenger_seats_count'/>
+        <result property='isPassenger' column='is_passenger'/>
+        <result property='isThereBackWindows' column='is_there_back_windows'/>
+        <result property='clearanceLength' column='clearance_length'/>
+        <result property='isThereTopTrunk' column='is_there_top_trunk'/>
+        <result property='liftingCapacity' column='lifting_capacity'/>
+        <result property='batteryPowerReserve' column='battery_power_reserve'/>
+    </resultMap>
+    <select id="getAllCarsDetail" resultMap="car_detail">
+        select * from car_detail
+    </select>
+    <select id="getCarDetailById" parameterType="java.lang.Long" resultMap="car_detail">
+        select * from car_detail
+        where id = #{id}
+    </select>
+    <select id="getLastCarDetail" resultMap="car_detail">
+        select * from car_detail where id in (
+            select max(id)
+            from car_detail)
+    </select>
+    <insert id="addCarDetail" parameterType="com.solvd.car.odb.entity.CarDetail">
+        insert into car_detail(wheel_radius, salon, is_there_back_view_camera, passenger_seats_count, is_passenger,
+                        is_there_back_windows, clearance_length, is_there_top_trunk, lifting_capacity, battery_power_reserve)
+        values (#{wheelRadius}, #{salon}, #{isThereBackViewCamera}, #{passengerSeatsCount}, #{isPassenger},
+                #{isThereBackWindows}, #{clearanceLength}, #{isThereTopTrunk}, #{liftingCapacity}, #{batteryPowerReserve})
+    </insert>
+    <delete id="deleteCarDetail" parameterType="com.solvd.car.odb.entity.CarDetail">
+        delete from car_detail
+        where id = #{id}
+    </delete>
+    <update id="updateCarDetail" parameterType="com.solvd.car.odb.entity.CarDetail">
+        update car_detail
+        set wheel_radius = #{wheelRadius}, salon = #{salon},
+            is_there_back_view_camera = #{isThereBackViewCamera}, passenger_seats_count = #{passengerSeatsCount},
+            is_passenger = #{isPassenger}, is_there_back_windows = #{isThereBackWindows},
+            clearance_length = #{clearanceLength}, is_there_top_trunk = #{isThereTopTrunk},
+            lifting_capacity = #{liftingCapacity}, battery_power_reserve = #{batteryPowerReserve}
+        where id = #{id}
+    </update>
+</mapper>

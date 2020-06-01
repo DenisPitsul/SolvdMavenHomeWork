@@ -1,6 +1,6 @@
 package com.solvd.car.menu;
 
-import com.solvd.car.place.Address;
+import com.solvd.car.odb.entity.Address;
 import org.apache.log4j.Logger;
 
 import java.util.InputMismatchException;
@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class AddressMenu {
     private static final Logger LOGGER = Logger.getLogger(AddressMenu.class);
-    private static final String ONLY_LETTERS_REGEX = "^([a-zA-Z]*)$";
+    private static final String ONLY_LETTERS_REGEX = "^([a-zA-Z ]*)$";
     private static final String ONLY_NUMBERS_REGEX = "^([1-9][0-9]*)$";
 
     private Scanner in;
@@ -24,8 +24,8 @@ public class AddressMenu {
      *  And in addition we can specify district and village if it is not city
      *  else we can specify 0 to miss entering these fields
      */
-    public void inputAddressManually(int propertyNumberParameter, Address.Builder addressParameter) {
-        Address.Builder address = addressParameter;
+    public void inputAddressManually(int propertyNumberParameter, Address addressParameter) {
+        Address address = addressParameter;
 
         String value = "";
         /*
@@ -160,7 +160,7 @@ public class AddressMenu {
                 }
                 else {
                     System.out.println("Address created!");
-                    homesMenu.setAddress(address.build());
+                    homesMenu.setAddress(address);
                     homesMenu.openGarageMenu();
                     propertyNumber++;
                 }

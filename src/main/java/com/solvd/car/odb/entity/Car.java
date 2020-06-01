@@ -1,22 +1,22 @@
 package com.solvd.car.odb.entity;
 
 public class Car {
-    private long id;
+    private Long id;
     private String model;
     private String color;
     private String number;
-    private int maxSpeed;
-    private int year;
+    private Integer maxSpeed;
+    private Integer year;
     private Engine engine;
     private CarDetail carDetail;
 
     public Car() { }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -44,19 +44,19 @@ public class Car {
         this.number = number;
     }
 
-    public int getMaxSpeed() {
+    public Integer getMaxSpeed() {
         return maxSpeed;
     }
 
-    public void setMaxSpeed(int maxSpeed) {
+    public void setMaxSpeed(Integer maxSpeed) {
         this.maxSpeed = maxSpeed;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
@@ -74,6 +74,10 @@ public class Car {
 
     public void setCarDetail(CarDetail carDetail) {
         this.carDetail = carDetail;
+    }
+
+    public String getShortInfo() {
+        return "Car{model='" + this.getModel() + "', number='" + this.getNumber() + "'}";
     }
 
     @Override

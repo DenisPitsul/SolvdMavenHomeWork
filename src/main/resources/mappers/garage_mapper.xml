@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.garage.IGarageDAO">
+    <resultMap id="garage" type="com.solvd.car.odb.entity.Garage">
+        <id property="id" column="id"/>
+        <result property="isBig" column="is_big"/>
+        <association property="home"
+                     column="home_id"
+                     javaType="com.solvd.car.odb.entity.Home"
+                     select="com.solvd.car.odb.dao.home.IHomeDAO.getHomeById"
+                     fetchType="eager"/>
+    </resultMap>
+    <select id="getAllGarages" resultMap="garage">
+        select * from garage
+        inner join home on garage.home_id = home.id
+        inner join address on home.address_id = address.id
+    </select>
+    <select id="getGarageById" parameterType="java.lang.Long" resultMap="garage">
+        select * from garage
+        inner join home on garage.home_id = home.id
+        inner join address on home.address_id = address.id
+        where garage.id = #{id}
+    </select>
+    <select id="getLastGarage" resultMap="garage">
+        select * from garage where id in (
+            select max(id)
+            from garage)
+    </select>
+    <insert id="addGarage" parameterType="com.solvd.car.odb.entity.Garage">
+        insert into garage(is_big, home_id)
+        values (#{isBig}, #{home.id})
+    </insert>
+    <delete id="deleteGarage" parameterType="com.solvd.car.odb.entity.Garage">
+        delete from garage
+        where id = #{id}
+    </delete>
+    <update id="updateGarage" parameterType="com.solvd.car.odb.entity.Garage">
+        update garage
+        set is_big = #{isBig}, home_id = #{home.id}
+    </update>
+</mapper>

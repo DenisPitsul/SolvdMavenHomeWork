@@ -1,0 +1,38 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.engine.IEngineDAO">
+    <resultMap id="engine" type="com.solvd.car.odb.entity.Engine">
+        <id property="id" column="id"/>
+        <result property='name' column='name'/>
+        <result property='type' column='type'/>
+    </resultMap>
+    <select id="getAllEngines" resultMap="engine">
+        select * from engine
+    </select>
+    <select id="getEngineById" parameterType="java.lang.Long" resultMap="engine">
+        select * from engine
+        where id = #{id}
+    </select>
+    <select id="getEngineByName" parameterType="java.lang.String" resultMap="engine">
+        select * from engine
+        where name = #{name}
+    </select>
+    <select id="getLastEngine" resultMap="engine">
+        select * from engine where id in (
+            select max(id)
+            from engine)
+    </select>
+    <insert id="addEngine" parameterType="com.solvd.car.odb.entity.Engine">
+        insert into engine(name, type)
+        values (#{name}, #{type})
+    </insert>
+    <delete id="deleteEngine" parameterType="com.solvd.car.odb.entity.Engine">
+        delete from engine
+        where id = #{id}
+    </delete>
+    <update id="updateEngine" parameterType="com.solvd.car.odb.entity.Engine">
+        update engine
+        set name = #{name}, type = #{type}
+        where id = #{id}
+    </update>
+</mapper>

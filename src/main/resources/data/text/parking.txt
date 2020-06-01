@@ -1,4 +1,0 @@
-MercedesVito,Diesel_2.2,white,CE2901AA,240,2012,true,true,8,
-ToyotaLandCruiser,V6+Turbo,grey,CE3377AA,240,2014,true,55,true,
-AudiA6,V6+Turbo,red,CE5510AA,260,2016,20,Alcantara,true,
-MercedesVito,Diesel_2.2,white,CE2902AA,240,2012,true,true,9,

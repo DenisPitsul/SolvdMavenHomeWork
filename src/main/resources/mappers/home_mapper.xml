@@ -1,0 +1,38 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.home.IHomeDAO">
+    <resultMap id="home" type="com.solvd.car.odb.entity.Home">
+        <id property="id" column="id"/>
+        <association property="address"
+                     column="address_id"
+                     javaType="com.solvd.car.odb.entity.Address"
+                     select="com.solvd.car.odb.dao.address.IAddressDAO.getAddressById"
+                     fetchType="eager"/>
+    </resultMap>
+    <select id="getAllHomes" resultMap="home">
+        select * from home
+        inner join address on home.address_id = address.id
+    </select>
+    <select id="getHomeById" parameterType="java.lang.Long" resultMap="home">
+        select * from home
+        inner  join address on home.address_id = address.id
+        where home.id = #{id}
+    </select>
+    <select id="getLastHome" resultMap="home">
+        select * from home where id in (
+            select max(id)
+            from home)
+    </select>
+    <insert id="addHome" parameterType="com.solvd.car.odb.entity.Home">
+        insert into home(address_id)
+        values (#{address.id})
+    </insert>
+    <delete id="deleteHome" parameterType="com.solvd.car.odb.entity.Home">
+        delete from home
+        where id = #{id}
+    </delete>
+    <update id="updateHome" parameterType="com.solvd.car.odb.entity.Home">
+        update home
+        set address_id = #{address.id}
+    </update>
+</mapper>

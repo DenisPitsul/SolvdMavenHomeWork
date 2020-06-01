@@ -1,0 +1,47 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.car.ICarDAO">
+    <resultMap id="car" type="com.solvd.car.odb.entity.Car">
+        <id property='id' column='id'/>
+        <result property='model' column='model'/>
+        <result property='color' column='color'/>
+        <result property='number' column='number'/>
+        <result property='maxSpeed' column='max_speed'/>
+        <result property='year' column='year'/>
+        <association property="engine"
+                     column="engine_id"
+                     javaType="com.solvd.car.odb.entity.Engine"
+                     select="com.solvd.car.odb.dao.engine.IEngineDAO.getEngineById"
+                     fetchType="eager"/>
+        <association property="carDetail"
+                     column="car_detail_id"
+                     javaType="com.solvd.car.odb.entity.CarDetail"
+                     select="com.solvd.car.odb.dao.car_detail.ICarDetailDAO.getCarDetailById"
+                     fetchType="eager"/>
+    </resultMap>
+    <select id="getAllCars" resultMap="car">
+        select * from car
+        inner join engine on car.engine_id = engine.id
+        inner join car_detail on car.car_detail_id = car_detail.id
+    </select>
+    <select id="getCarById" parameterType="java.lang.Long" resultMap="car">
+        select * from car
+        inner join engine on car.engine_id = engine.id
+        inner join car_detail on car.car_detail_id = car_detail.id
+        where car.id = #{id}
+    </select>
+    <insert id="addCar" parameterType="com.solvd.car.odb.entity.Car">
+        insert into car(model, color, number, max_speed, year, engine_id, car_detail_id)
+        values (#{model}, #{color}, #{number}, #{maxSpeed}, #{year}, #{engine.id}, #{carDetail.id})
+    </insert>
+    <delete id="deleteCar" parameterType="com.solvd.car.odb.entity.Car">
+        delete from car
+        where id = #{id}
+    </delete>
+    <update id="updateCar" parameterType="com.solvd.car.odb.entity.Car">
+        update car
+        set model = #{model}, color = #{color}, number = #{number}, max_speed = #{maxSpeed}, year = #{year},
+            engine_id = #{engine.id}, car_detail_id = #{carDetail.id}
+        where id = #{id}
+    </update>
+</mapper>

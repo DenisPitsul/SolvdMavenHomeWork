@@ -1,7 +1,7 @@
 package com.solvd.car.odb.entity;
 
 public class Engine {
-    private long id;
+    private Long id;
     private String name;
     private String type;
 
@@ -9,7 +9,7 @@ public class Engine {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

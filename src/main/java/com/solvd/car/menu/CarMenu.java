@@ -1,23 +1,12 @@
 package com.solvd.car.menu;
 
 import com.solvd.car.factory_method.FactoryMethodCar;
-import com.solvd.car.odb.dao.DAOFactory;
-import com.solvd.car.odb.dao.car.CarDAO;
-import com.solvd.car.odb.dao.car.ICarDAO;
 import com.solvd.car.odb.entity.Car;
-import com.solvd.car.odb.entity.CarDetail;
-import com.solvd.car.odb.entity.Engine;
-import com.solvd.car.vehicle.Vehicle;
-import com.solvd.car.vehicle.final_car.AudiA6;
-import com.solvd.car.vehicle.final_car.MercedesVito;
-import com.solvd.car.vehicle.final_car.TeslaSemi;
-import com.solvd.car.vehicle.final_car.ToyotaLandCruiser;
-import com.solvd.car.vehicle.helper.CarModel;
+import com.solvd.car.helper.CarModel;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class CarMenu {
@@ -30,15 +19,8 @@ public class CarMenu {
     private MainMenu mainMenu;
     private String inputIndex;
 
-    private ICarDAO carDAO;
-
     public CarMenu(MainMenu mainMenu)  {
         this.mainMenu = mainMenu;
-        setCarDao();
-    }
-
-    private void setCarDao() {
-        this.carDAO = DAOFactory.getInstance().getCarDAO();
     }
 
     /**
@@ -87,11 +69,11 @@ public class CarMenu {
                         chooseCreateType(CarModel.TESLA_SEMI);
                         break;
                     case "5":
-                        Vehicle car = FactoryMethodCar.createCar(CarModel.DEFAULT);
-                        mainMenu.getCarListInstance().add(car);
+                        Car car = FactoryMethodCar.createCar(CarModel.DEFAULT);
 
-                        AudiA6 audiA6 = (AudiA6) car;
-                        addAudiA6ToDataBase(audiA6);
+                        mainMenu.getCarServiceInstance().addCar(car);
+                        List<Car> carList = mainMenu.getCarServiceInstance().getAllCars();
+                        mainMenu.setCarListInstance(carList);
 
                         inputCarType();
                         break;
@@ -143,41 +125,25 @@ public class CarMenu {
                     case "1":
                         switch (carModel) {
                             case AUDI_A6:
-                                createAudiA6Form(0, new AudiA6());
+                                createAudiA6Form(0, FactoryMethodCar.createCar(CarModel.AUDI_A6));
                                 break;
                             case MERCEDES_VITO:
-                                createMercedesVitoForm(0, new MercedesVito());
+                                createMercedesVitoForm(0, FactoryMethodCar.createCar(CarModel.MERCEDES_VITO));
                                 break;
                             case TOYOTA_LAND_CRUISER:
-                                createToyotaLandCruiserForm(0, new ToyotaLandCruiser());
+                                createToyotaLandCruiserForm(0, FactoryMethodCar.createCar(CarModel.TOYOTA_LAND_CRUISER));
                                 break;
                             case TESLA_SEMI:
-                                createTeslaSemiForm(0, new TeslaSemi());
+                                createTeslaSemiForm(0, FactoryMethodCar.createCar(CarModel.TESLA_SEMI));
                                 break;
                         }
                         break;
                     case "2":
-                        Vehicle car = FactoryMethodCar.createCar(carModel);
-                        mainMenu.getCarListInstance().add(car);
+                        Car car = FactoryMethodCar.createCar(carModel);
 
-                        switch (carModel) {
-                            case AUDI_A6:
-                                AudiA6 audiA6 = (AudiA6) car;
-                                addAudiA6ToDataBase(audiA6);
-                                break;
-                            case MERCEDES_VITO:
-                                MercedesVito mercedesVito = (MercedesVito) car;
-                                addMercedesVitoToDataBase(mercedesVito);
-                                break;
-                            case TOYOTA_LAND_CRUISER:
-                                ToyotaLandCruiser toyotaLandCruiser = (ToyotaLandCruiser) car;
-                                addToyotaLandCruiserToDataBase(toyotaLandCruiser);
-                                break;
-                            case TESLA_SEMI:
-                                TeslaSemi teslaSemi = (TeslaSemi) car;
-                                addTeslaSemiToDataBase(teslaSemi);
-                                break;
-                        }
+                        mainMenu.getCarServiceInstance().addCar(car);
+                        List<Car> carList = mainMenu.getCarServiceInstance().getAllCars();
+                        mainMenu.setCarListInstance(carList);
 
                         inputCarType();
                         break;
@@ -195,101 +161,12 @@ public class CarMenu {
         }
     }
 
-    private void addAudiA6ToDataBase(AudiA6 audiA6) {
-        Car car = new Car();
-        car.setModel(audiA6.getCarModel());
-        car.setColor(audiA6.getColor());
-        car.setNumber(audiA6.getNumber());
-        car.setMaxSpeed(audiA6.getMaxSpeed());
-        car.setYear(audiA6.getYear());
-
-        Engine engine = new Engine();
-        engine.setName(audiA6.getEngine().getName());
-        engine.setType(audiA6.getEngine().getType());
-        car.setEngine(engine);
-
-        CarDetail carDetail = new CarDetail();
-        carDetail.setWheelRadius(audiA6.getWheelRadius());
-        carDetail.setSalon(audiA6.getSalon());
-        carDetail.setThereBackViewCamera(audiA6.isThereBackViewCamera());
-        car.setCarDetail(carDetail);
-
-        LOGGER.info("audi a6");
-
-        carDAO.add(car);
-    }
-
-    private void addMercedesVitoToDataBase(MercedesVito mercedesVito) {
-        Car car = new Car();
-        car.setModel(mercedesVito.getCarModel());
-        car.setColor(mercedesVito.getColor());
-        car.setNumber(mercedesVito.getNumber());
-        car.setMaxSpeed(mercedesVito.getMaxSpeed());
-        car.setYear(mercedesVito.getYear());
-
-        Engine engine = new Engine();
-        engine.setName(mercedesVito.getEngine().getName());
-        engine.setType(mercedesVito.getEngine().getType());
-        car.setEngine(engine);
-
-        CarDetail carDetail = new CarDetail();
-        carDetail.setPassenger(mercedesVito.isPassenger());
-        carDetail.setThereBackWindows(mercedesVito.isThereBackWindows());
-        carDetail.setPassengerSeatsCount(mercedesVito.getPassengerSeatsCount());
-        car.setCarDetail(carDetail);
-
-        carDAO.add(car);
-    }
-
-    private void addToyotaLandCruiserToDataBase(ToyotaLandCruiser toyotaLandCruiser) {
-        Car car = new Car();
-        car.setModel(toyotaLandCruiser.getCarModel());
-        car.setColor(toyotaLandCruiser.getColor());
-        car.setNumber(toyotaLandCruiser.getNumber());
-        car.setMaxSpeed(toyotaLandCruiser.getMaxSpeed());
-        car.setYear(toyotaLandCruiser.getYear());
-
-        Engine engine = new Engine();
-        engine.setName(toyotaLandCruiser.getEngine().getName());
-        engine.setType(toyotaLandCruiser.getEngine().getType());
-        car.setEngine(engine);
-
-        CarDetail carDetail = new CarDetail();
-        carDetail.setThereTopTrunk(toyotaLandCruiser.isThereTopTrunk());
-        carDetail.setClearanceLength(toyotaLandCruiser.getClearanceLength());
-        carDetail.setThereBackViewCamera(toyotaLandCruiser.isThereBackViewCamera());
-        car.setCarDetail(carDetail);
-
-        carDAO.add(car);
-    }
-
-    private void addTeslaSemiToDataBase(TeslaSemi teslaSemi) {
-        Car car = new Car();
-        car.setModel(teslaSemi.getCarModel());
-        car.setColor(teslaSemi.getColor());
-        car.setNumber(teslaSemi.getNumber());
-        car.setMaxSpeed(teslaSemi.getMaxSpeed());
-        car.setYear(teslaSemi.getYear());
-
-        Engine engine = new Engine();
-        engine.setName(teslaSemi.getEngine().getName());
-        engine.setType(teslaSemi.getEngine().getType());
-        car.setEngine(engine);
-
-        CarDetail carDetail = new CarDetail();
-        carDetail.setLiftingCapacity(teslaSemi.getLiftingCapacity());
-        carDetail.setBatteryPowerReserve(teslaSemi.getBatteryPowerReserve());
-        car.setCarDetail(carDetail);
-
-        carDAO.add(car);
-    }
-
     /**
      *  Create Audi A6 manually
      *  Input color of car, car number, max speed and year of the car
      */
-    private void createAudiA6Form(int propertyNumberParameter, AudiA6 audiA6Car) {
-        AudiA6 audiA6 = audiA6Car;
+    private void createAudiA6Form(int propertyNumberParameter, Car audiA6Car) {
+        Car audiA6 = audiA6Car;
 
         String value = "";
         /*
@@ -401,9 +278,10 @@ public class CarMenu {
                 else {
                     LOGGER.info("Audi A6 created.");
                     LOGGER.debug(audiA6);
-                    mainMenu.getCarListInstance().add(audiA6);
 
-                    addAudiA6ToDataBase(audiA6);
+                    mainMenu.getCarServiceInstance().addCar(audiA6);
+                    List<Car> carList = mainMenu.getCarServiceInstance().getAllCars();
+                    mainMenu.setCarListInstance(carList);
 
                     mainMenu.openMainMenu();
                     propertyNumber++;
@@ -421,8 +299,8 @@ public class CarMenu {
      *  Create Mercedes Vito manually
      *  Input color of car, car number, max speed and year of the car
      */
-    private void createMercedesVitoForm(int propertyNumberParameter, MercedesVito mercedesVitoCar) {
-        MercedesVito mercedesVito = mercedesVitoCar;
+    private void createMercedesVitoForm(int propertyNumberParameter, Car mercedesVitoCar) {
+        Car mercedesVito = mercedesVitoCar;
 
         String value = "";
         /*
@@ -534,9 +412,10 @@ public class CarMenu {
                 else {
                     LOGGER.info("Mercedes Vito created.");
                     LOGGER.debug(mercedesVito);
-                    mainMenu.getCarListInstance().add(mercedesVito);
 
-                    addMercedesVitoToDataBase(mercedesVito);
+                    mainMenu.getCarServiceInstance().addCar(mercedesVito);
+                    List<Car> carList = mainMenu.getCarServiceInstance().getAllCars();
+                    mainMenu.setCarListInstance(carList);
 
                     mainMenu.openMainMenu();
                     propertyNumber++;
@@ -554,8 +433,8 @@ public class CarMenu {
      *  Create Toyota Land Cruiser manually
      *  Input color of car, car number, max speed and year of the car
      */
-    private void createToyotaLandCruiserForm(int propertyNumberParameter, ToyotaLandCruiser toyotaLandCruiserCar) {
-        ToyotaLandCruiser toyotaLandCruiser = toyotaLandCruiserCar;
+    private void createToyotaLandCruiserForm(int propertyNumberParameter, Car toyotaLandCruiserCar) {
+        Car toyotaLandCruiser = toyotaLandCruiserCar;
 
         String value = "";
         /*
@@ -667,9 +546,10 @@ public class CarMenu {
                 else {
                     LOGGER.info("Toyota Land Cruiser created.");
                     LOGGER.debug(toyotaLandCruiser);
-                    mainMenu.getCarListInstance().add(toyotaLandCruiser);
 
-                    addToyotaLandCruiserToDataBase(toyotaLandCruiser);
+                    mainMenu.getCarServiceInstance().addCar(toyotaLandCruiser);
+                    List<Car> carList = mainMenu.getCarServiceInstance().getAllCars();
+                    mainMenu.setCarListInstance(carList);
 
                     mainMenu.openMainMenu();
                     propertyNumber++;
@@ -687,8 +567,8 @@ public class CarMenu {
      *  Create Tesla Semi manually
      *  Input color of car, car number, max speed and year of the car
      */
-    private void createTeslaSemiForm(int propertyNumberParameter, TeslaSemi teslaSemiCar) {
-        TeslaSemi teslaSemi = teslaSemiCar;
+    private void createTeslaSemiForm(int propertyNumberParameter, Car teslaSemiCar) {
+        Car teslaSemi = teslaSemiCar;
 
         String value = "";
         /*
@@ -800,9 +680,10 @@ public class CarMenu {
                 else {
                     LOGGER.info("Tesla Semi created.");
                     LOGGER.debug(teslaSemi);
-                    mainMenu.getCarListInstance().add(teslaSemi);
 
-                    addTeslaSemiToDataBase(teslaSemi);
+                    mainMenu.getCarServiceInstance().addCar(teslaSemi);
+                    List<Car> carList = mainMenu.getCarServiceInstance().getAllCars();
+                    mainMenu.setCarListInstance(carList);
 
                     mainMenu.openMainMenu();
                     propertyNumber++;

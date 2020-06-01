@@ -1,30 +1,28 @@
 package com.solvd.car.place;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.solvd.car.vehicle.Vehicle;
+import com.solvd.car.odb.entity.SellingCar;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CarDealership<T extends Vehicle> implements CarPlace<T> {
+public class CarDealership {
     private static final Logger LOGGER = Logger.getLogger(CarDealership.class);
 
-    @JsonProperty("count")
     private int countOfCarsInCarDealership;
-    @JsonProperty("selling_cars")
-    private List<T> sellingCars;
+    private List<SellingCar> sellingCars;
 
     public CarDealership() {
         sellingCars = new ArrayList<>();
     }
 
-    public List<T> getSellingCars() {
+    public List<SellingCar> getSellingCars() {
         return sellingCars;
     }
 
-    public void setSellingCars(List<T> sellingCars) {
+    public void setSellingCars(List<SellingCar> sellingCars) {
         this.sellingCars = sellingCars;
+        this.countOfCarsInCarDealership = sellingCars.size();
     }
 
     public int getCountOfCarsInCarDealership() {
@@ -35,8 +33,7 @@ public class CarDealership<T extends Vehicle> implements CarPlace<T> {
      * add car to car dealership
      * @param car -> will added to this car dealership
      */
-    @Override
-    public void add(T car) {
+    public void add(SellingCar car) {
         sellingCars.add(car);
         countOfCarsInCarDealership++;
     }
@@ -46,11 +43,10 @@ public class CarDealership<T extends Vehicle> implements CarPlace<T> {
      * @param selectedCar -> car which have to delete from this car dealership
      * @return deleted car or null if selectedCar weren't in this car dealership
      */
-    @Override
-    public T leaveThePlace(T selectedCar) {
-        T car = null;
+    public SellingCar leaveThePlace(SellingCar selectedCar) {
+        SellingCar car = null;
         boolean isCarExist = false;
-        for (T eachCar : sellingCars) {
+        for (SellingCar eachCar : sellingCars) {
             if (eachCar == selectedCar) {
                 car = selectedCar;
                 isCarExist = true;
@@ -70,7 +66,7 @@ public class CarDealership<T extends Vehicle> implements CarPlace<T> {
      * @param carPlaceIndex -> index of car in car in car dealer ship which have to delete from this car dealership
      * @return deleted car or null if there is not any cars in the car dealership by index
      */
-    public T leaveTheCarDealership(int carPlaceIndex) {
+    public SellingCar leaveTheCarDealership(int carPlaceIndex) {
         if (sellingCars.get(carPlaceIndex) == null) {
             return null;
         }
@@ -81,13 +77,12 @@ public class CarDealership<T extends Vehicle> implements CarPlace<T> {
     /**
      * Show all cars in the car dealership on the screen
      */
-    @Override
     public void showInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("Car dealership {").append(System.lineSeparator());
         sb.append("\tCount of cars in car dealership: ").append(countOfCarsInCarDealership).append(System.lineSeparator());
         for (int i = 0; i < sellingCars.size(); i++) {
-            sb.append("\tCar #").append(i).append(": ").append(sellingCars.get(i).getShortInfo()).append(System.lineSeparator());
+            sb.append("\tCar #").append(i).append(": ").append(sellingCars.get(i).getCar().getShortInfo()).append(System.lineSeparator());
         }
         sb.append("}");
         LOGGER.debug(sb.toString());

@@ -1,0 +1,38 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.address.IAddressDAO">
+    <resultMap id="address" type="com.solvd.car.odb.entity.Address">
+        <id property='id' column='id'/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="village" column="village"/>
+        <result property="street" column="street"/>
+        <result property="houseAddress" column="house_address"/>
+    </resultMap>
+    <select id="getAllAddresses" resultMap="address">
+        select * from address
+    </select>
+    <select id="getAddressById" parameterType="java.lang.Long" resultMap="address">
+        select * from address
+        where id = #{id}
+    </select>
+    <select id="getLastAddress" resultMap="address">
+        select * from address where id in (
+            select max(id)
+            from address)
+    </select>
+    <insert id="addAddress" parameterType="com.solvd.car.odb.entity.Address">
+        insert into address(city, district, village, street, house_number)
+        values (#{city}, #{district}, #{village}, #{street}, #{houseNumber})
+    </insert>
+    <delete id="deleteAddress" parameterType="com.solvd.car.odb.entity.Address">
+        delete from address
+        where id = #{id}
+    </delete>
+    <update id="updateAddress" parameterType="com.solvd.car.odb.entity.Address">
+        update address
+        set city = #{city}, district = #{district}, village = #{village},
+            street = #{street}, house_number = #{houseNumber}
+        where id = #{id}
+    </update>
+</mapper>

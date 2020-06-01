@@ -1,16 +1,11 @@
 package com.solvd.car.menu;
 
-import com.solvd.car.odb.dao.DAOFactory;
-import com.solvd.car.odb.dao.car.ICarDAO;
+import com.solvd.car.odb.entity.*;
+import com.solvd.car.odb.service.*;
 import com.solvd.car.place.*;
-import com.solvd.car.place_io.AdminInfoIO;
-import com.solvd.car.place_io.CarDealershipIO;
-import com.solvd.car.place_io.HomesIO;
-import com.solvd.car.place_io.ParkingIO;
-import com.solvd.car.vehicle.Vehicle;
+import com.solvd.car.place.GarageOfHome;
 import org.apache.log4j.Logger;
 
-import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,42 +14,123 @@ import java.util.Scanner;
 public class MainMenu {
     private static final Logger LOGGER = Logger.getLogger(MainMenu.class);
 
-    private List<Vehicle> carList;
-    private Parking<Vehicle> parking;
-    private CarDealership<Vehicle> carDealership;
+    private List<Car> carList;
+    private Parking parking;
+    private CarDealership carDealership;
     private Homes homes;
 
     private CarMenu carMenu;
     private ParkingMenu parkingMenu;
     private CarDealershipMenu carDealershipMenu;
     private HomesMenu homesMenu;
-    private AdminInfoMenu adminInfoMenu;
 
-    private ParkingIO parkingIO;
-    private CarDealershipIO carDealershipIO;
-    private HomesIO homesIO;
-    private AdminInfoIO adminInfoIO;
+    private CarService carService;
+    private ParkingService parkingService;
+    private CarDealershipService carDealershipService;
 
-    private ICarDAO carDAO;
+    private AddressService addressService;
+    private HomeService homeService;
+    private GarageService garageService;
+    private CarsInGarageService carsInGarageService;
 
     private Scanner in;
     private String inputIndex;
 
     public MainMenu() {
-        parkingIO = new ParkingIO(ParkingIO.PARKING_FILE_PATH);
-        carDealershipIO = new CarDealershipIO(CarDealershipIO.CAR_DEALERSHIP_FILE_PATH);
-        homesIO = new HomesIO(HomesIO.HOMES_FILE_PATH);
-        adminInfoIO = new AdminInfoIO(AdminInfoIO.ADMIN_INFO_FILE_PATH);
-        parking = parkingIO.readAllFromFile();
-        carDealership = carDealershipIO.readAllFromFile();
-        homes = homesIO.readAllFromFile();
+        this.carService = getCarServiceInstance();
+        this.carList = carService.getAllCars();
 
-        setCarDao();
+        this.parkingService = getParkingServiceInstance();
+        this.parking = new Parking();
+        this.parking.setParkedCars(parkingService.getAllParkedCars());
+
+        this.carDealershipService = getCarDealershipServiceInstance();
+        this.carDealership = new CarDealership();
+        this.carDealership.setSellingCars(carDealershipService.getAllSellingCars());
+
+        this.addressService = getAddressServiceInstance();
+        this.homeService = getHomeServiceInstance();
+        this.garageService = getGarageServiceInstance();
+        this.carsInGarageService = getCarsInGarageServiceInstance();
+
+        this.homes = getAllHomesFromDatabase();
     }
 
-    private void setCarDao() {
-        this.carDAO = DAOFactory.getInstance().getCarDAO();
-        LOGGER.debug("Cars from database: " + carDAO.getAll().toString());
+    /**
+     * If we have not initialize CarService instance yet then init and return
+     * @return CarService instance
+     */
+    public CarService getCarServiceInstance() {
+        if (carService == null) {
+            this.carService = new CarService();
+        }
+        return carService;
+    }
+
+    /**
+     * If we have not initialize ParkingService instance yet then init and return
+     * @return ParkingService instance
+     */
+    public ParkingService getParkingServiceInstance() {
+        if (parkingService == null) {
+            this.parkingService = new ParkingService();
+        }
+        return parkingService;
+    }
+
+    /**
+     * If we have not initialize CarDealershipService instance yet then init and return
+     * @return CarDealershipService instance
+     */
+    public CarDealershipService getCarDealershipServiceInstance() {
+        if (carDealershipService == null) {
+            this.carDealershipService = new CarDealershipService();
+        }
+        return carDealershipService;
+    }
+
+    /**
+     * If we have not initialize AddressService instance yet then init and return
+     * @return AddressService instance
+     */
+    public AddressService getAddressServiceInstance() {
+        if (addressService == null) {
+            this.addressService = new AddressService();
+        }
+        return addressService;
+    }
+
+    /**
+     * If we have not initialize HomeService instance yet then init and return
+     * @return HomeService instance
+     */
+    public HomeService getHomeServiceInstance() {
+        if (homeService == null) {
+            this.homeService = new HomeService();
+        }
+        return homeService;
+    }
+
+    /**
+     * If we have not initialize GarageService instance yet then init and return
+     * @return GarageService instance
+     */
+    public GarageService getGarageServiceInstance() {
+        if (garageService == null) {
+            this.garageService = new GarageService();
+        }
+        return garageService;
+    }
+
+    /**
+     * If we have not initialize CarsInGarageService instance yet then init and return
+     * @return CarsInGarageService instance
+     */
+    public CarsInGarageService getCarsInGarageServiceInstance() {
+        if (carsInGarageService == null) {
+            this.carsInGarageService = new CarsInGarageService();
+        }
+        return carsInGarageService;
     }
 
     /**
@@ -102,21 +178,10 @@ public class MainMenu {
     }
 
     /**
-     * If we have not opened AdminInfoMenu instance yet then create and return
-     * @return homesMenu instance
-     */
-    private AdminInfoMenu getAdminInfoMenu() {
-        if (adminInfoMenu == null) {
-            adminInfoMenu = new AdminInfoMenu(this);
-        }
-        return adminInfoMenu;
-    }
-
-    /**
      * If we have not list of car instance yet then create and return
      * @return list of car instance
      */
-    public List<Vehicle> getCarListInstance() {
+    public List<Car> getCarListInstance() {
         if (carList == null) {
             carList = new LinkedList<>();
         }
@@ -124,25 +189,55 @@ public class MainMenu {
     }
 
     /**
+     * Set car to car list. We use this method when we get data from database
+     * after deleting some car from car table in database
+     *
+     * @param carList - cars which we get from database
+     */
+    public void setCarListInstance(List<Car> carList) {
+        this.carList = carList;
+    }
+
+    /**
      * If we have not parking instance yet then create and return
      * @return parking instance
      */
-    public Parking<Vehicle> getParkingInstance() {
+    public Parking getParkingInstance() {
         if (parking == null) {
-            parking = new Parking<>();
+            parking = new Parking();
         }
         return parking;
+    }
+
+    /**
+     * Set parked cars to parking. We use this method when we get data from database
+     * after deleting some car from parking in database
+     *
+     * @param parkedCarList - cars which we get from database
+     */
+    public void setParkingInstance(List<ParkedCar> parkedCarList) {
+        this.parking.setParkedCars(parkedCarList);
     }
 
     /**
      * If we have not car dealership instance yet then create and return
      * @return car dealership instance
      */
-    public CarDealership<Vehicle> getCarDealershipInstance() {
+    public CarDealership getCarDealershipInstance() {
         if (carDealership == null) {
-            carDealership = new CarDealership<>();
+            carDealership = new CarDealership();
         }
         return carDealership;
+    }
+
+    /**
+     * Set selling cars to car dealership. We use this method when we get data from database
+     * after deleting some car from car dealership in database
+     *
+     * @param sellingCarList - cars which we get from database
+     */
+    public void setCarDealershipInstance(List<SellingCar> sellingCarList) {
+        this.carDealership.setSellingCars(sellingCarList);
     }
 
     /**
@@ -157,31 +252,34 @@ public class MainMenu {
     }
 
     /**
-     * @return parkingDAO instance
+     * In this method we generate our local object homes by data from database
+     *
+     * @return all homes from database
      */
-    public ParkingIO getParkingIO() {
-        return parkingIO;
+    public Homes getAllHomesFromDatabase() {
+        Homes homes = new Homes();
+        List<Garage> garageList = garageService.getAllGarage();
+        for (Garage garageFromDatabase: garageList) {
+            Address address = garageFromDatabase.getHome().getAddress();
+
+            List<CarInGarage> carInGarageList = carsInGarageService.getCarsInGarageByGarageId(garageFromDatabase.getId());
+            GarageOfHome garageOfHome = new GarageOfHome();
+            garageOfHome.setBig(garageFromDatabase.isBig());
+            garageOfHome.setCarsInGarage(carInGarageList);
+
+            homes.addHome(address, garageOfHome);
+        }
+        return homes;
     }
 
     /**
-     * @return carDealershipDAO instance
+     * Set homes to local object homes. We use this method when we get data from database
+     * after deleting some home from home table in database
+     *
+     * @param homes - set to our local object homes
      */
-    public CarDealershipIO getCarDealershipIO() {
-        return carDealershipIO;
-    }
-
-    /**
-     * @return homesDAO instance
-     */
-    public HomesIO getHomesIO() {
-        return homesIO;
-    }
-
-    /**
-     * @return adminInfoDAO instance
-     */
-    public AdminInfoIO getAdminInfoDAO() {
-        return adminInfoIO;
+    public void setHomesInstance(Homes homes) {
+        this.homes = homes;
     }
 
     /**
@@ -196,7 +294,7 @@ public class MainMenu {
         StringBuilder sb = new StringBuilder();
         sb.append("All cars {").append(System.lineSeparator());
         int i = 0;
-        for (Vehicle car : carList) {
+        for (Car car : carList) {
             sb.append("\tCar #").append(i).append(": ").append(car.getShortInfo()).append(System.lineSeparator());
             i++;
         }
@@ -259,7 +357,6 @@ public class MainMenu {
                 System.out.println("Parking menu input                 ->  2|");
                 System.out.println("Car dealership menu input          ->  3|");
                 System.out.println("Home menu input                    ->  4|");
-                System.out.println("Admin information menu input       ->  5|");
 
                 inputIndex = in.nextLine();
 
@@ -278,9 +375,6 @@ public class MainMenu {
                         break;
                     case "4":
                         openHomeMenu();
-                        break;
-                    case "5":
-                        openAdminInfoMenu();
                         break;
                     default:
                         LOGGER.info("You have to input number from menu.");
@@ -329,12 +423,5 @@ public class MainMenu {
         homesMenu.inputHomesOperation();
     }
 
-    /**
-     * Go to admin info menu
-     */
-    private void openAdminInfoMenu() {
-        AdminInfoMenu adminInfoMenu = getAdminInfoMenu();
-        adminInfoMenu.inputAdminInfoOperation();
-    }
 
 }

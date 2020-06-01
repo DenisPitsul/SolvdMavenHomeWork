@@ -1,0 +1,34 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.car.odb.dao.car_dealership.ICarDealershipDAO">
+    <resultMap id="selling_car" type="com.solvd.car.odb.entity.SellingCar">
+        <id property='id' column='id'/>
+        <association property="car"
+                     column="car_id"
+                     javaType="com.solvd.car.odb.entity.Car"
+                     select="com.solvd.car.odb.dao.car.ICarDAO.getCarById"
+                     fetchType="eager"/>
+    </resultMap>
+    <select id="getAllSellingCars" resultMap="selling_car">
+        select * from selling_cars
+        inner join car on selling_cars.car_id = car.id
+    </select>
+    <select id="getSellingCarById" parameterType="java.lang.Long" resultMap="selling_car">
+        select * from selling_cars
+        inner join car on selling_cars.car_id = car.id
+        where selling_cars.id = #{id}
+    </select>
+    <insert id="addSellingCar" parameterType="com.solvd.car.odb.entity.SellingCar">
+        insert into selling_cars(car_id)
+        values (#{car.id})
+    </insert>
+    <delete id="deleteSellingCar" parameterType="com.solvd.car.odb.entity.SellingCar">
+        delete from selling_cars
+        where id = #{id}
+    </delete>
+    <update id="updateSellingCar" parameterType="com.solvd.car.odb.entity.SellingCar">
+        update selling_cars
+        set car_id = #{car.id}
+        where id = #{id}
+    </update>
+</mapper>

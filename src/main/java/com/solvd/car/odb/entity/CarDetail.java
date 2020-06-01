@@ -1,7 +1,7 @@
 package com.solvd.car.odb.entity;
 
 public class CarDetail {
-    private long id;
+    private Long id;
     private int wheelRadius;
     private String salon;
     private boolean isThereBackViewCamera;
@@ -13,11 +13,11 @@ public class CarDetail {
     private int liftingCapacity;
     private int batteryPowerReserve;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
